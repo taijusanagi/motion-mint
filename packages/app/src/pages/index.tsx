@@ -11,17 +11,16 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function LandingPage() {
   const headerState = {
-    isConnected: true, // user is connected
-    userAddress: "0x1234...abcd", // user's Ethereum address
-    isCreator: true, // user is a creator
+    isConnected: true,
+    userAddress: "0x1234...abcd",
+    isCreator: true,
   };
 
   return (
     <div className={`min-h-screen flex flex-col ${inter.className}`}>
       <Header {...headerState} />
-
-      <main className="flex-1 mx-auto max-w-4xl p-4">
-        <section className="text-center py-24">
+      <main className="flex-1 mx-auto max-w-4xl px-8">
+        <section className="text-center py-32">
           <h1 className="text-4xl font-bold text-primary mb-4">MotionMint</h1>
           <p className="text-xl text-default mb-8">Motion, Mint, Monetize - The Future of Motion Data.</p>
           <Button label="Connect Wallet" className="bg-primary text-default mx-2" />
@@ -33,7 +32,6 @@ export default function LandingPage() {
             monetize their dynamic artistry.
           </p>
         </section>
-
         <section className="py-8 text-center">
           <h2 className="text-3xl font-bold text-default mb-8">Benefits</h2>
           <div className="grid grid-cols-3 gap-8">
@@ -63,7 +61,6 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
-
       <Footer />
     </div>
   );
