@@ -4,14 +4,15 @@ import { FaBars } from "react-icons/fa";
 interface HeaderProps {
   isConnected: boolean;
   userAddress?: string;
-  isCreator?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ isConnected, userAddress, isCreator }) => {
+const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
   return (
     <header className="bg-default shadow-sm p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="text-primary font-bold text-xl">MotionMint</div>
+        <div className="text-primary font-bold text-xl">
+          <a href="/">MotionMint</a>
+        </div>
         <div className="flex items-center">
           {isConnected ? (
             <span className="text-accent mr-4">{userAddress}</span>
@@ -28,20 +29,11 @@ const Header: React.FC<HeaderProps> = ({ isConnected, userAddress, isCreator }) 
                       Dashboard
                     </a>
                   </li>
-                  {isCreator && (
-                    <>
-                      <li>
-                        <a href="/mymotiondata" className="block text-default hover:text-primary px-4 py-2">
-                          My Motion Data
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/earnings" className="block text-default hover:text-primary px-4 py-2">
-                          Earnings
-                        </a>
-                      </li>
-                    </>
-                  )}
+                  <li>
+                    <a href="/marketplace" className="block text-default hover:text-primary px-4 py-2">
+                      Market Place
+                    </a>
+                  </li>
                 </ul>
               )}
             </nav>

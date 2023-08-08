@@ -13,7 +13,6 @@ export default function LandingPage() {
   const headerState = {
     isConnected: true,
     userAddress: "0x1234...abcd",
-    isCreator: true,
   };
 
   return (
