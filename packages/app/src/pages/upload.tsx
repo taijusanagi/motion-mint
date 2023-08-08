@@ -93,7 +93,8 @@ const UploadAndConversion: React.FC = () => {
               <Button
                 label="Mint"
                 onClick={() => {
-                  router.push("/dashboard");
+                  const id = "1234";
+                  router.push(`/motions/${id}`);
                 }}
               />
             </div>

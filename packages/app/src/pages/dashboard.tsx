@@ -9,6 +9,7 @@ import { FaPlus } from "react-icons/fa"; // Assuming you have react-icons instal
 const inter = Inter({ subsets: ["latin"] });
 
 interface Motion {
+  id: string;
   title: string;
   status: "Pending Conversion" | "Converted" | "Listed for Sale";
   thumbnailUrl: string; // Assuming each motion data has a thumbnail
@@ -22,8 +23,8 @@ export default function Dashboard() {
   };
 
   const userMotions: Motion[] = [
-    { title: "Motion 1", status: "Converted", thumbnailUrl: "https://via.placeholder.com/400" },
-    { title: "Motion 2", status: "Pending Conversion", thumbnailUrl: "https://via.placeholder.com/400" },
+    { id: "1", title: "Motion 1", status: "Converted", thumbnailUrl: "https://via.placeholder.com/400" },
+    { id: "2", title: "Motion 2", status: "Pending Conversion", thumbnailUrl: "https://via.placeholder.com/400" },
   ];
 
   const earningsSummary = {
@@ -36,12 +37,18 @@ export default function Dashboard() {
     <div className={`min-h-screen flex flex-col ${inter.className}`}>
       <Header {...headerState} />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
-        <p className="mb-4 text-xs text-accent">Created motions are displayed here.</p>
         <section className="mb-8">
-          <h2 className="text-2xl font-bold text-default mb-4">Your Motion</h2>
+          <h2 className="text-2xl font-bold text-default mb-2">Your Motion</h2>
+          <p className="mb-4 text-xs text-accent">Created motions are displayed here.</p>
           <ul>
             {userMotions.map((motion, idx) => (
-              <li key={idx} className="flex border p-4 rounded-md shadow-sm my-2 bg-default text-default">
+              <li
+                key={idx}
+                className="flex border p-4 rounded-md shadow-sm my-2 bg-default text-default cursor-pointer"
+                onClick={() => {
+                  router.push(`/motions/${motion.id}`);
+                }}
+              >
                 <img src={motion.thumbnailUrl} alt={motion.title} className="w-32 h-18 rounded-md object-cover mr-4" />
                 <div>
                   <h3 className="font-bold">{motion.title}</h3>
@@ -51,9 +58,10 @@ export default function Dashboard() {
             ))}
           </ul>
         </section>
-        <p className="mb-4 text-xs text-accent">Data is fetched from The Graph.</p>
+
         <section>
-          <h2 className="text-2xl font-bold text-default mb-4">Earnings Summary</h2>
+          <h2 className="text-2xl font-bold text-default mb-2">Earnings Summary</h2>
+          <p className="mb-4 text-xs text-accent">Data is fetched from The Graph.</p>
           <div className="border p-4 rounded-md shadow-sm bg-default text-default">
             <p>Total Earnings: ${earningsSummary.totalEarnings.toFixed(2)}</p>
             <p>Pending Payments: ${earningsSummary.pendingPayments.toFixed(2)}</p>
