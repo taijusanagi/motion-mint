@@ -1,6 +1,7 @@
 import React from "react";
 import { FaBars } from "react-icons/fa";
 import Button from "./Button";
+import Link from "next/link";
 
 interface HeaderProps {
   isConnected: boolean;
@@ -12,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
     <header className="bg-default shadow-sm p-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-primary font-bold text-xl">
-          <a href="/">MotionMint</a>
+          <Link href="/">MotionMint</Link>
         </div>
         <div className="flex items-center">
           {isConnected ? (
@@ -26,14 +27,14 @@ const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
               <nav className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <ul className="p-2 space-y-2">
                   <li>
-                    <a href="/dashboard" className="block text-default hover:text-primary px-4 py-2">
+                    <Link href="/dashboard" className="block text-default hover:text-primary px-4 py-2">
                       Dashboard
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/market" className="block text-default hover:text-primary px-4 py-2">
+                    <Link href="/market" className="block text-default hover:text-primary px-4 py-2">
                       Market
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </nav>
