@@ -20,6 +20,8 @@ MotionMint is revolutionizing the way we perceive and utilize video content. By 
 
 ## Technical Detail
 
+![diagram](./docs/img/diagram.png)
+
 ### DeepMotion API
 
 MotionMint leverages the **DeepMotion API** for the core functionality of video-to-motion data conversion. This advanced AI-driven service is responsible for the seamless transformation of video content into rich motion data, ensuring high accuracy and quality.
