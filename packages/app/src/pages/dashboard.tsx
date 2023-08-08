@@ -26,10 +26,17 @@ export default function Dashboard() {
     { title: "Motion 2", status: "Pending Conversion", thumbnailUrl: "https://via.placeholder.com/400" },
   ];
 
+  const earningsSummary = {
+    totalEarnings: 100,
+    pendingPayments: 20,
+    recentSales: 50,
+  };
+
   return (
     <div className={`min-h-screen flex flex-col ${inter.className}`}>
       <Header {...headerState} />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
+        <p className="mb-4 text-xs text-accent">Created motions are displayed here.</p>
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-default mb-4">Your Motion</h2>
           <ul>
@@ -43,6 +50,15 @@ export default function Dashboard() {
               </li>
             ))}
           </ul>
+        </section>
+        <p className="mb-4 text-xs text-accent">Data is fetched from The Graph.</p>
+        <section>
+          <h2 className="text-2xl font-bold text-default mb-4">Earnings Summary</h2>
+          <div className="border p-4 rounded-md shadow-sm bg-default text-default">
+            <p>Total Earnings: ${earningsSummary.totalEarnings.toFixed(2)}</p>
+            <p>Pending Payments: ${earningsSummary.pendingPayments.toFixed(2)}</p>
+            <p>Recent Sales: ${earningsSummary.recentSales.toFixed(2)}</p>
+          </div>
         </section>
         <Button
           label={<FaPlus />}

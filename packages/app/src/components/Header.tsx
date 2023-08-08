@@ -1,5 +1,6 @@
 import React from "react";
 import { FaBars } from "react-icons/fa";
+import Button from "./Button";
 
 interface HeaderProps {
   isConnected: boolean;
@@ -15,14 +16,14 @@ const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
         </div>
         <div className="flex items-center">
           {isConnected ? (
-            <span className="text-accent mr-4">{userAddress}</span>
+            <span className="text-accent text-sm mr-4">{userAddress}</span>
           ) : (
-            <button className="bg-primary text-default rounded-md p-2 mr-4">Connect Wallet</button>
+            <Button label="Connect Wallet" />
           )}
-          <div className="relative group">
-            <FaBars className="text-default hover:text-primary cursor-pointer" />
-            <nav className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              {isConnected && (
+          {isConnected && (
+            <div className="relative group">
+              <FaBars className="text-default hover:text-primary cursor-pointer" />
+              <nav className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <ul className="p-2 space-y-2">
                   <li>
                     <a href="/dashboard" className="block text-default hover:text-primary px-4 py-2">
@@ -35,9 +36,9 @@ const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
                     </a>
                   </li>
                 </ul>
-              )}
-            </nav>
-          </div>
+              </nav>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -50,6 +50,10 @@ const Market: React.FC = () => {
     <div className={`min-h-screen flex flex-col ${inter.className}`}>
       <Header {...headerState} />
       <main className="flex-1 mx-auto w-full max-w-4xl py-12 px-4 relative">
+        <p className="mb-4 text-xs text-accent">
+          Advanced functions like search/fillter are not implemented yet. Go to motion detail page to test buy/sell
+          functinality.
+        </p>
         <div className="mb-8 relative rounded-md shadow-sm">
           <input
             type="text"

@@ -59,6 +59,9 @@ const UploadAndConversion: React.FC = () => {
     <div className={`min-h-screen flex flex-col ${inter.className}`}>
       <Header {...headerState} />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
+        <p className="mb-4 text-xs text-accent">
+          Please upload video contains motion to create and mint motion data with AI.
+        </p>
         <div className="mb-4">
           <label className="block text-default mb-2">Upload Video File</label>
           <input
@@ -88,7 +91,7 @@ const UploadAndConversion: React.FC = () => {
             <div className="flex justify-end gap-2">
               <Button label="Cancel" onClick={handleCancelClick} type="secondary" />
               <Button
-                label="Confirm"
+                label="Mint"
                 onClick={() => {
                   router.push("/dashboard");
                 }}
