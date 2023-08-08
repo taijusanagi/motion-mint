@@ -13,14 +13,16 @@
     "build": "run-p build:*",
     "build:app": "yarn workspace @motion-mint/app build",
     "lint": "run-p lint:*",
-    "lint:app": "yarn workspace @motion-mint/app lint"
+    "lint:app": "yarn workspace @motion-mint/app lint",
+    "format": "yarn prettier --write . --ignore-path .gitignore"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.0.1"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --cache --fix",
