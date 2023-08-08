@@ -1,6 +1,7 @@
 // pages/upload.tsx
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
 import Header from "@/components/Header";
 import Button from "@/components/Button";
@@ -8,6 +9,7 @@ import Button from "@/components/Button";
 const inter = Inter({ subsets: ["latin"] });
 
 const UploadAndConversion: React.FC = () => {
+  const router = useRouter();
   const headerState = {
     isConnected: true,
     userAddress: "0x1234...abcd",
@@ -17,6 +19,8 @@ const UploadAndConversion: React.FC = () => {
   const [motion, setMotion] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files && event.target.files[0];
@@ -29,7 +33,6 @@ const UploadAndConversion: React.FC = () => {
     if (file) {
       setIsLoading(true);
       setProgress(0);
-
       const interval = setInterval(() => {
         setProgress((prevProgress) => {
           if (prevProgress >= 100) {
@@ -47,6 +50,9 @@ const UploadAndConversion: React.FC = () => {
   const handleCancelClick = () => {
     setFile(null);
     setMotion(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -60,6 +66,7 @@ const UploadAndConversion: React.FC = () => {
             accept="video/*"
             className="border rounded-md p-2 w-full bg-default text-default"
             onChange={handleFileChange}
+            ref={fileInputRef}
           />
         </div>
         <div className="flex justify-end mb-8">
@@ -79,8 +86,13 @@ const UploadAndConversion: React.FC = () => {
               <div className="border rounded-md bg-default text-default p-4">Motion Data Preview Player Here</div>
             </div>
             <div className="flex justify-end gap-2">
-              <Button label="Cancel" onClick={handleCancelClick} />
-              <Button label="Confirm" onClick={() => {}} />
+              <Button label="Cancel" onClick={handleCancelClick} type="secondary" />
+              <Button
+                label="Confirm"
+                onClick={() => {
+                  router.push("/dashboard");
+                }}
+              />
             </div>
           </>
         )}

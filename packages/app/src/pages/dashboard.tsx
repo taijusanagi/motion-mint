@@ -1,6 +1,7 @@
 // pages/dashboard.tsx
 
 import { Inter } from "next/font/google";
+import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import Button from "@/components/Button";
 import { FaPlus } from "react-icons/fa"; // Assuming you have react-icons installed
@@ -14,6 +15,7 @@ interface Motion {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const headerState = {
     isConnected: true,
     userAddress: "0x1234...abcd",
@@ -45,6 +47,9 @@ export default function Dashboard() {
         <Button
           label={<FaPlus />}
           className="bg-primary text-white rounded-full shadow-sm p-4 hover:bg-accent transition-colors duration-200 fixed bottom-8 right-8"
+          onClick={() => {
+            router.push("/upload");
+          }}
         />
       </main>
     </div>
