@@ -34,7 +34,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col ${inter.className}`}>
+    <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
       <Header {...headerState} />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
         <section className="mb-8">

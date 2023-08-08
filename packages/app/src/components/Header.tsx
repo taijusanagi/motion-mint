@@ -10,7 +10,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
   return (
-    <header className="bg-default shadow-sm p-4">
+    <header className="bg-default p-4 bg-gradient-to-r from-green-100 to-blue-100">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-primary font-bold text-xl">
           <Link href="/">MotionMint</Link>

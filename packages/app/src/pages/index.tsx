@@ -17,7 +17,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col ${inter.className}`}>
+    <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
       <Header {...headerState} />
       <main className="flex-1 mx-auto w-full max-w-4xl px-4">
         <section className="text-center py-32">
@@ -43,7 +43,7 @@ export default function LandingPage() {
         </section>
         <section className="py-8 text-center">
           <h2 className="text-3xl font-bold text-default mb-8">Benefits</h2>
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center flex flex-col items-center">
               <div className="text-3xl text-primary mb-4">
                 <FaRocket />

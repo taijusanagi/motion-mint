@@ -3,7 +3,7 @@ import { FaGithub } from "react-icons/fa";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-default shadow-sm p-4 mt-8">
+    <footer className="bg-default shadow-sm p-4 mt-8 bg-gradient-to-r from-green-100 to-blue-100">
       <div className="container mx-auto flex justify-center">
         <a
           href="https://github.com/taijusanagi/motion-mint"
