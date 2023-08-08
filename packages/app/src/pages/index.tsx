@@ -18,7 +18,7 @@ export default function LandingPage() {
   return (
     <div className={`min-h-screen flex flex-col ${inter.className}`}>
       <Header {...headerState} />
-      <main className="flex-1 mx-auto max-w-4xl px-8">
+      <main className="flex-1 mx-auto w-full max-w-4xl px-4">
         <section className="text-center py-32">
           <h1 className="text-4xl font-bold text-primary mb-4">MotionMint</h1>
           <p className="text-xl text-default mb-8">Motion, Mint, Monetize - The Future of Motion Data.</p>

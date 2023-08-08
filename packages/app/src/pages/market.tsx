@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const Marketplace: React.FC = () => {
+const Market: React.FC = () => {
   const headerState = {
     isConnected: true,
     userAddress: "0x1234...abcd",
@@ -49,13 +49,13 @@ const Marketplace: React.FC = () => {
   return (
     <div className={`min-h-screen flex flex-col ${inter.className}`}>
       <Header {...headerState} />
-
-      <main className="flex-1 mx-auto max-w-4xl py-12 relative">
+      <main className="flex-1 mx-auto w-full max-w-4xl py-12 px-4 relative">
         <div className="mb-8 relative rounded-md shadow-sm">
           <input
             type="text"
             placeholder="Search motion data or creators..."
             className="w-full p-4 border rounded-md bg-default placeholder-default"
+            disabled={true}
           />
           <FaSearch className="absolute top-1/2 transform -translate-y-1/2 right-5 text-accent" />
         </div>
@@ -78,4 +78,4 @@ const Marketplace: React.FC = () => {
   );
 };
 
-export default Marketplace;
+export default Market;

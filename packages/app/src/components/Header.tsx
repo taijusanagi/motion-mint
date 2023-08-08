@@ -30,8 +30,8 @@ const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
                     </a>
                   </li>
                   <li>
-                    <a href="/marketplace" className="block text-default hover:text-primary px-4 py-2">
-                      Market Place
+                    <a href="/market" className="block text-default hover:text-primary px-4 py-2">
+                      Market
                     </a>
                   </li>
                 </ul>
