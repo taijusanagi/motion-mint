@@ -60,21 +60,17 @@ const UploadAndConversion: React.FC = () => {
         <h2 className="text-2xl font-bold text-default mb-2">Create Motion</h2>
         <p className="mb-4 text-xs text-accent">Please upload video to create and mint motion data with AI.</p>
         <div className="mb-4">
-          <label className="block text-default mb-2">Upload Video File</label>
-          <input
-            type="file"
-            accept="video/*"
-            className="border rounded-md p-2 w-full bg-default text-default"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-          />
+          <div className="border rounded-md bg-default text-default p-4">
+            <h3 className="text-lg font-bold text-default mb-2">Upload Video File</h3>
+            <input type="file" accept="video/*" onChange={handleFileChange} ref={fileInputRef} />
+          </div>
         </div>
         <div className="flex justify-end mb-8">
           <Button label="Start Convert" onClick={handleConvertClick} disabled={!file || isLoading || motion} />
         </div>
         {isLoading && (
           <div className="mb-4">
-            <label className="block text-default mb-2">AI Conversion Progress</label>
+            <h3 className="text-lg font-bold text-default mb-2">AI Conversion Progress</h3>
             <div className="border rounded-md p-1 bg-white">
               <div style={{ width: `${progress}%` }} className="bg-primary h-2 rounded-md"></div>
             </div>
@@ -84,13 +80,13 @@ const UploadAndConversion: React.FC = () => {
           <>
             <div className="mb-4">
               <div className="border rounded-md bg-default text-default p-4">
-                <h2 className="text-lg font-bold text-default mb-2">Motion Preview</h2>
+                <h3 className="text-lg font-bold text-default mb-2">Motion Preview</h3>
                 <p>Motion Data Preview Player Here</p>
               </div>
             </div>
             <div className="mb-4">
               <div className="border rounded-md bg-default text-default p-4">
-                <h2 className="text-lg font-bold text-default mb-2">Attestation</h2>
+                <h3 className="text-lg font-bold text-default mb-2">Attestation</h3>
                 {!worldIdAttestation && (
                   <div className="flex justify-end">
                     <IDKitWidget
