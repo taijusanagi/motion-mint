@@ -10,10 +10,14 @@
     "prepare": "husky install",
     "dev": "run-p dev:*",
     "dev:app": "yarn workspace @motion-mint/app dev",
+    "prebuild": "yarn workspace @motion-mint/contracts build",
     "build": "run-p build:*",
     "build:app": "yarn workspace @motion-mint/app build",
+    "test": "run-p test:*",
+    "test:contracts": "yarn workspace @motion-mint/contracts test",
     "lint": "run-p lint:*",
     "lint:app": "yarn workspace @motion-mint/app lint",
+    "lint:contracts": "yarn workspace @motion-mint/contracts lint",
     "format": "yarn prettier --write . --ignore-path .gitignore"
   },
   "devDependencies": {

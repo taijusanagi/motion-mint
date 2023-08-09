@@ -5,15 +5,11 @@ import Button from "@/components/Button";
 const inter = Inter({ subsets: ["latin"] });
 
 const MotionDataDetail: React.FC = () => {
-  const headerState = {
-    userAddress: "0x1234...abcd",
-  };
-
   const isCreator = false;
 
   return (
     <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
-      <Header {...headerState} />
+      <Header />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
         <h2 className="text-2xl font-bold text-default mb-2">Motion Detail</h2>
         <p className="mb-4 text-xs text-accent">Motion detail is displayed.</p>

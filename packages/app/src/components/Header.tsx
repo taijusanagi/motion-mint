@@ -1,15 +1,13 @@
 import React from "react";
 import { FaBars } from "react-icons/fa";
-import Button from "@/components/Button";
+
 import Link from "next/link";
 import useIsConnected from "@/hooks/useIsConnected";
-import { useAccount } from "wagmi";
-import truncate from "@/utils/truncate";
+
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const Header: React.FC = () => {
   const { isConnected } = useIsConnected();
-  const { address: userAddress } = useAccount();
 
   return (
     <header className="bg-default p-4 bg-gradient-to-r from-green-100 to-blue-100">
