@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import Button from "@/components/Button";
-import { FaPlus } from "react-icons/fa"; // Assuming you have react-icons installed
+import { FaPlus } from "react-icons/fa";
 
 const inter = Inter({ subsets: ["latin"] });
 
