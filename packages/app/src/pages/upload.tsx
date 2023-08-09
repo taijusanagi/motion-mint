@@ -10,10 +10,6 @@ const inter = Inter({ subsets: ["latin"] });
 
 const UploadAndConversion: React.FC = () => {
   const router = useRouter();
-  const headerState = {
-    isConnected: true,
-    userAddress: "0x1234...abcd",
-  };
 
   const [file, setFile] = useState<File | null>(null);
   const [motion, setMotion] = useState<any | null>(null);
@@ -57,7 +53,7 @@ const UploadAndConversion: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
-      <Header {...headerState} />
+      <Header />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
         <p className="mb-4 text-xs text-accent">
           Please upload video contains motion to create and mint motion data with AI.

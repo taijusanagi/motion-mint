@@ -10,10 +10,6 @@ const inter = Inter({ subsets: ["latin"] });
 
 const Market: React.FC = () => {
   const router = useRouter();
-  const headerState = {
-    isConnected: true,
-    userAddress: "0x1234...abcd",
-  };
 
   const motions = [
     {
@@ -55,7 +51,7 @@ const Market: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
-      <Header {...headerState} />
+      <Header />
       <main className="flex-1 mx-auto w-full max-w-4xl py-12 px-4 relative">
         <h2 className="text-2xl font-bold text-default mb-2">Market</h2>
         <p className="mb-4 text-xs text-accent">

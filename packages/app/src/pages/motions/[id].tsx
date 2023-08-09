@@ -6,7 +6,6 @@ const inter = Inter({ subsets: ["latin"] });
 
 const MotionDataDetail: React.FC = () => {
   const headerState = {
-    isConnected: true,
     userAddress: "0x1234...abcd",
   };
 

@@ -1,14 +1,16 @@
 import React from "react";
 import { FaBars } from "react-icons/fa";
-import Button from "./Button";
+import Button from "@/components/Button";
 import Link from "next/link";
+import useIsConnected from "@/hooks/useIsConnected";
+import { useAccount } from "wagmi";
+import truncate from "@/utils/truncate";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
-interface HeaderProps {
-  isConnected: boolean;
-  userAddress?: string;
-}
+const Header: React.FC = () => {
+  const { isConnected } = useIsConnected();
+  const { address: userAddress } = useAccount();
 
-const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
   return (
     <header className="bg-default p-4 bg-gradient-to-r from-green-100 to-blue-100">
       <div className="container mx-auto flex justify-between items-center">
@@ -16,11 +18,9 @@ const Header: React.FC<HeaderProps> = ({ isConnected, userAddress }) => {
           <Link href="/">MotionMint</Link>
         </div>
         <div className="flex items-center">
-          {isConnected ? (
-            <span className="text-accent text-sm mr-4">{userAddress}</span>
-          ) : (
-            <Button label="Connect Wallet" />
-          )}
+          <div className="mr-4">
+            <ConnectButton accountStatus="avatar" />
+          </div>
           {isConnected && (
             <div className="relative group">
               <FaBars className="text-default hover:text-primary cursor-pointer" />

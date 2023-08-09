@@ -17,10 +17,6 @@ interface Motion {
 
 export default function Dashboard() {
   const router = useRouter();
-  const headerState = {
-    isConnected: true,
-    userAddress: "0x1234...abcd",
-  };
 
   const userMotions: Motion[] = [
     { id: "1", title: "Motion 1", status: "Converted", thumbnailUrl: "https://via.placeholder.com/400" },
@@ -35,7 +31,7 @@ export default function Dashboard() {
 
   return (
     <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
-      <Header {...headerState} />
+      <Header />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-default mb-2">Your Motion</h2>

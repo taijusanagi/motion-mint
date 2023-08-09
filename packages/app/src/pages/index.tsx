@@ -4,30 +4,27 @@ import { Inter } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Button from "@/components/Button";
-
+import useIsConnected from "@/hooks/useIsConnected";
 import { FaRocket, FaDollarSign, FaUsers } from "react-icons/fa";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function LandingPage() {
   const router = useRouter();
-  const headerState = {
-    isConnected: true,
-    userAddress: "0x1234...abcd",
-  };
+  const { isConnected } = useIsConnected();
 
   return (
     <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
-      <Header {...headerState} />
+      <Header />
       <main className="flex-1 mx-auto w-full max-w-4xl px-4">
         <section className="text-center py-32">
           <h1 className="text-4xl font-bold text-primary mb-4">MotionMint</h1>
           <p className="text-xl text-default mb-8">Motion, Mint, Monetize - The Future of Motion Data.</p>
           <Button
-            label={!headerState.isConnected ? "Connect Wallet" : "Start App"}
+            label={!isConnected ? "Connect Wallet" : "Start App"}
             className="bg-primary text-default mx-2"
             onClick={() => {
-              if (!headerState.isConnected) {
+              if (!isConnected) {
               } else {
                 router.push("/dashboard");
               }
