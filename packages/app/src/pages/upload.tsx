@@ -6,6 +6,9 @@ import { Inter } from "next/font/google";
 import Header from "@/components/Header";
 import Button from "@/components/Button";
 import { IDKitWidget } from "@worldcoin/idkit";
+import { NFTStorage, File } from "nft.storage";
+import { NFT_STORAGE_API_KEY } from "@/config";
+const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -62,7 +65,7 @@ const UploadAndConversion: React.FC = () => {
         <div className="mb-4">
           <div className="border rounded-md bg-default text-default p-4">
             <h3 className="text-lg font-bold text-default mb-2">Upload Video File</h3>
-            <input type="file" accept="video/*" onChange={handleFileChange} ref={fileInputRef} />
+            <input type="file" onChange={handleFileChange} ref={fileInputRef} />
           </div>
         </div>
         <div className="flex justify-end mb-8">
@@ -116,9 +119,17 @@ const UploadAndConversion: React.FC = () => {
               <Button label="Cancel" onClick={handleCancelClick} type="secondary" />
               <Button
                 label="Mint"
-                onClick={() => {
-                  const id = "1234";
-                  router.push(`/motions/${id}`);
+                onClick={async () => {
+                  if (!file) {
+                    return;
+                  }
+                  const metadata = await client.store({
+                    name: "Test",
+                    description: "Test",
+                    image: file,
+                  } as any);
+                  console.log(metadata.url);
+                  // router.push(`/motions/${id}`);
                 }}
               />
             </div>
