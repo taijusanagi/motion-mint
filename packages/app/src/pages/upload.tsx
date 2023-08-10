@@ -37,7 +37,25 @@ const UploadAndConversion: React.FC = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files && event.target.files[0];
+
     if (selectedFile) {
+      if (selectedFile.type !== "video/mp4") {
+        alert("Please upload an mp4 file.");
+        event.target.value = ""; // Clear the file input
+        setFile(null);
+        return;
+      }
+
+      if (selectedFile.size > 1000000) {
+        // 1MB in bytes
+        alert("Please upload a file less than 1MB.");
+        event.target.value = ""; // Clear the file input
+        setFile(null);
+        return;
+      }
+
+      // Continue processing the file...
+
       setFile(selectedFile);
     }
   };
