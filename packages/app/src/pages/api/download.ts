@@ -35,7 +35,7 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
     // You can then proceed with the download logic or other operations.
     const downloadResp = await session.get(`${apiServerUrl}/download/${jobId}`);
     const downloadData = downloadResp.data;
-    const result = [];
+    const result = {} as any;
     if (downloadData.count > 0) {
       const urls = downloadData.links[0].urls;
       for (const fileUrl of urls) {
@@ -43,7 +43,7 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
           for (const file of fileUrl.files) {
             for (const fileType of ["bvh", "fbx", "mp4"]) {
               if (file[fileType]) {
-                result.push({ fileType, url: file[fileType] });
+                result[fileType] = file[fileType];
               }
             }
           }

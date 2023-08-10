@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import { IDKitWidget } from "@worldcoin/idkit";
 import { NFTStorage, File } from "nft.storage";
 import { NFT_STORAGE_API_KEY } from "@/config";
+
 const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,6 +24,16 @@ const UploadAndConversion: React.FC = () => {
   const [worldIdAttestation, setWorldIdAttestation] = useState();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [elapsedTime, setElapsedTime] = useState("0h 0m 0s");
+
+  function formatElapsedTime(milliseconds: number) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours}h ${minutes}m ${seconds}s`;
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files && event.target.files[0];
@@ -38,6 +49,7 @@ const UploadAndConversion: React.FC = () => {
       if (!file) {
         return;
       }
+      const startTime = new Date().getTime();
       const formData = new FormData();
       formData.append("video", file);
 
@@ -52,8 +64,14 @@ const UploadAndConversion: React.FC = () => {
 
       const createJobData = await createJobResponse.json();
       const { jobId } = createJobData;
+      // const jobId = "vuhAYMPbSTcfAtm8NopRGj";
       setJobId(jobId);
+
       const intervalId = setInterval(async () => {
+        const currentTime = new Date().getTime();
+        const elapsedMillis = currentTime - startTime;
+        setElapsedTime(formatElapsedTime(elapsedMillis));
+
         const downloadResponse = await fetch("/api/download", {
           method: "POST",
           headers: {
@@ -61,15 +79,23 @@ const UploadAndConversion: React.FC = () => {
           },
           body: JSON.stringify({ jobId: jobId }),
         });
+        setProgress((prevProgress) => {
+          let newProgress = prevProgress + 2.5;
+          if (newProgress > 100) {
+            newProgress = 100;
+          }
+          return newProgress;
+        });
+
         if (downloadResponse.status === 200) {
           // Once we get a 200 status, clear the interval and proceed to the next process
           clearInterval(intervalId);
 
           const downloadData = await downloadResponse.json();
           console.log(downloadData);
-
           // Assuming 'setMotion' is a state setter, update it here or move to next process
-          setMotion({});
+          setMotion(downloadData.result);
+          setProgress(100);
           setIsLoading(false);
         }
       }, 5000); // Check every 5 seconds
@@ -99,20 +125,27 @@ const UploadAndConversion: React.FC = () => {
         <div className="flex justify-end mb-8">
           <Button label="Start Convert" onClick={handleConvertClick} disabled={!file || isLoading || motion} />
         </div>
-        {isLoading && (
+        {(isLoading || motion) && (
           <div className="mb-4">
             <h3 className="text-lg font-bold text-default mb-2">AI Conversion Progress</h3>
-            <div className="border rounded-md p-1 bg-white">
+            <div className="border rounded-md p-1 bg-white mb-2">
               <div style={{ width: `${progress}%` }} className="bg-primary h-2 rounded-md"></div>
             </div>
+            <p className="text-xs text-default">Time: {elapsedTime}</p>
+            {jobId && <p className="text-xs text-default">Job ID created: {jobId}</p>}
           </div>
         )}
         {motion && (
           <>
             <div className="mb-4">
               <div className="border rounded-md bg-default text-default p-4">
-                <h3 className="text-lg font-bold text-default mb-2">Motion Preview</h3>
-                <p>Motion Data Preview Player Here</p>
+                <h3 className="text-lg font-bold text-default mb-2">Motion Preview </h3>
+                <section className="flex justify-center">
+                  <video autoPlay muted loop className="background-video h-80 rounded-md shadow-sm">
+                    <source src={motion.mp4} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </section>
               </div>
             </div>
             <div className="mb-4">

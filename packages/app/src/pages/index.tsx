@@ -12,10 +12,10 @@ const inter = Inter({ subsets: ["latin"] });
 export default function LandingPage() {
   const router = useRouter();
   const { isConnected } = useIsConnected();
-
   return (
     <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
       <Header />
+
       <main className="flex-1 mx-auto w-full max-w-4xl px-4">
         <section className="text-center py-24">
           <h1 className="text-4xl font-bold text-primary mb-4">MotionMint</h1>
