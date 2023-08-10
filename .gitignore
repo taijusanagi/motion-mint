@@ -130,5 +130,6 @@ dist
 .pnp.*
 
 # Local
+python
 .temp
 .DS_Store

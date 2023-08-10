@@ -17,7 +17,7 @@ export default function LandingPage() {
     <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
       <Header />
       <main className="flex-1 mx-auto w-full max-w-4xl px-4">
-        <section className="text-center py-32">
+        <section className="text-center py-24">
           <h1 className="text-4xl font-bold text-primary mb-4">MotionMint</h1>
           <p className="text-xl text-default mb-8">Motion, Mint, Monetize - The Future of Motion Data.</p>
           <Button
@@ -30,6 +30,12 @@ export default function LandingPage() {
               }
             }}
           />
+        </section>
+        <section className="py-8 flex justify-center">
+          <video autoPlay muted loop className="background-video h-80">
+            <source src="/demo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </section>
         <section className="py-8 text-center">
           <h2 className="text-3xl font-bold text-default mb-8">About</h2>
