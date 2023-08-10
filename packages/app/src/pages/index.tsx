@@ -32,7 +32,7 @@ export default function LandingPage() {
           />
         </section>
         <section className="py-8 flex justify-center">
-          <video autoPlay muted loop className="background-video h-80">
+          <video autoPlay muted loop className="background-video h-80 rounded-md shadow-sm">
             <source src="/demo.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>

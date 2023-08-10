@@ -17,6 +17,7 @@ const UploadAndConversion: React.FC = () => {
 
   const [file, setFile] = useState<File | null>(null);
   const [motion, setMotion] = useState<any | null>(null);
+  const [jobId, setJobId] = useState();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [worldIdAttestation, setWorldIdAttestation] = useState();
@@ -30,21 +31,48 @@ const UploadAndConversion: React.FC = () => {
     }
   };
 
-  const handleConvertClick = () => {
+  const handleConvertClick = async () => {
     if (file) {
       setIsLoading(true);
       setProgress(0);
-      const interval = setInterval(() => {
-        setProgress((prevProgress) => {
-          if (prevProgress >= 100) {
-            clearInterval(interval);
-            setIsLoading(false);
-            setMotion({});
-            return 100;
-          }
-          return prevProgress + 10;
+      if (!file) {
+        return;
+      }
+      const formData = new FormData();
+      formData.append("video", file);
+
+      const createJobResponse = await fetch("/api/createJob", {
+        method: "POST",
+        body: formData,
+      });
+      if (createJobResponse.status !== 200) {
+        alert(createJobResponse.statusText);
+        return;
+      }
+
+      const createJobData = await createJobResponse.json();
+      const { jobId } = createJobData;
+      setJobId(jobId);
+      const intervalId = setInterval(async () => {
+        const downloadResponse = await fetch("/api/download", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ jobId: jobId }),
         });
-      }, 500);
+        if (downloadResponse.status === 200) {
+          // Once we get a 200 status, clear the interval and proceed to the next process
+          clearInterval(intervalId);
+
+          const downloadData = await downloadResponse.json();
+          console.log(downloadData);
+
+          // Assuming 'setMotion' is a state setter, update it here or move to next process
+          setMotion({});
+          setIsLoading(false);
+        }
+      }, 5000); // Check every 5 seconds
     }
   };
 
@@ -120,15 +148,12 @@ const UploadAndConversion: React.FC = () => {
               <Button
                 label="Mint"
                 onClick={async () => {
-                  if (!file) {
-                    return;
-                  }
-                  const metadata = await client.store({
-                    name: "Test",
-                    description: "Test",
-                    image: file,
-                  } as any);
-                  console.log(metadata.url);
+                  // const metadata = await client.store({
+                  //   name: "Test",
+                  //   description: "Test",
+                  //   image: file,
+                  // } as any);
+                  // console.log(metadata.url);
                   // router.push(`/motions/${id}`);
                 }}
               />
