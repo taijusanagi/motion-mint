@@ -10,8 +10,8 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ label, onClick, className, disabled, type = "primary" }) => {
   const baseClasses = {
-    primary: "bg-primary text-white hover:bg-accent",
-    secondary: "bg-secondary text-default hover:bg-accent-light",
+    primary: "bg-primary text-white",
+    secondary: "bg-secondary text-default",
   };
 
   return (

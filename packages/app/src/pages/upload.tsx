@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
 import Header from "@/components/Header";
 import Button from "@/components/Button";
+import Checkbox from "@/components/CheckBox";
 import { IDKitWidget } from "@worldcoin/idkit";
 import { NFTStorage, File } from "nft.storage";
 import { NFT_STORAGE_API_KEY } from "@/config";
@@ -18,10 +19,12 @@ const UploadAndConversion: React.FC = () => {
 
   const [file, setFile] = useState<File | null>(null);
   const [motion, setMotion] = useState<any | null>(null);
-  const [jobId, setJobId] = useState();
+  const [jobId, setJobId] = useState("");
+  const [cid, setCid] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [worldIdAttestation, setWorldIdAttestation] = useState();
+  const [isChecked, setIsChecked] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [elapsedTime, setElapsedTime] = useState("0h 0m 0s");
@@ -71,18 +74,18 @@ const UploadAndConversion: React.FC = () => {
       const formData = new FormData();
       formData.append("video", file);
 
-      const createJobResponse = await fetch("/api/createJob", {
-        method: "POST",
-        body: formData,
-      });
-      if (createJobResponse.status !== 200) {
-        alert(createJobResponse.statusText);
-        return;
-      }
+      // const createJobResponse = await fetch("/api/createJob", {
+      //   method: "POST",
+      //   body: formData,
+      // });
+      // if (createJobResponse.status !== 200) {
+      //   alert(createJobResponse.statusText);
+      //   return;
+      // }
 
-      const createJobData = await createJobResponse.json();
-      const { jobId } = createJobData;
-      // const jobId = "vuhAYMPbSTcfAtm8NopRGj";
+      // const createJobData = await createJobResponse.json();
+      // const { jobId } = createJobData;
+      const jobId = "vuhAYMPbSTcfAtm8NopRGj";
       setJobId(jobId);
 
       const intervalId = setInterval(async () => {
@@ -113,6 +116,29 @@ const UploadAndConversion: React.FC = () => {
           console.log(downloadData);
           // Assuming 'setMotion' is a state setter, update it here or move to next process
           setMotion(downloadData.result);
+
+          // Upload to NFT Storage
+          const cid = await client.storeBlob(
+            new Blob([
+              JSON.stringify({
+                name: "Motion",
+                description: "Motion data",
+                animation_url: downloadData.result.mp4,
+                attributes: [
+                  {
+                    trait_type: "bvh",
+                    value: downloadData.result.bvh,
+                  },
+                  {
+                    trait_type: "fbx",
+                    value: downloadData.result.fbx,
+                  },
+                ],
+              }),
+            ]),
+          );
+          setCid(cid);
+          console.log(cid);
           setProgress(100);
           setIsLoading(false);
         }
@@ -132,32 +158,64 @@ const UploadAndConversion: React.FC = () => {
     <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
       <Header />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
-        <h2 className="text-2xl font-bold text-default mb-2">Create Motion</h2>
-        <p className="mb-4 text-xs text-accent">Please upload video to create and mint motion data with AI.</p>
+        <h2 className="text-2xl font-bold text-default mb-1">Create Motion</h2>
+        <p className="mb-4 text-xs text-accent">Mint your motion data from your video with AI and blockchain.</p>
         <div className="mb-4">
           <div className="border rounded-md bg-default text-default p-4">
-            <h3 className="text-lg font-bold text-default mb-2">Upload Video File</h3>
+            <h3 className="text-lg font-bold text-default mb-1">Upload Video File</h3>
+            <p className="mb-4 text-xs text-accent">Only mp4 file less than 1MB is allowed to upload.</p>
             <input type="file" onChange={handleFileChange} ref={fileInputRef} />
           </div>
         </div>
+        <div className="mb-4">
+          <div className="border rounded-md bg-default text-default p-4">
+            <h3 className="text-lg font-bold text-default mb-1">Terms</h3>
+            <p className="mb-4 text-xs text-accent">Please accept the terms before using the app.</p>
+            <p className="text-xs text-default mb-2">
+              {`- You must follow all laws and respect third-party rights. Do not use our APIs for illegal activities or
+              to infringe on others' rights.`}
+            </p>
+            <p className="text-xs text-default mb-6">
+              {`- You're responsible for any Content you submit via our APIs. We aren't liable for your use of the Content
+              but can review or remove it at our discretion.`}
+            </p>
+            <Checkbox label="I agree with the terms." onChange={setIsChecked} />
+          </div>
+        </div>
         <div className="flex justify-end mb-8">
-          <Button label="Start Convert" onClick={handleConvertClick} disabled={!file || isLoading || motion} />
+          <Button
+            label="Start Convert"
+            onClick={handleConvertClick}
+            disabled={!file || !isChecked || isLoading || motion}
+          />
         </div>
         {(isLoading || motion) && (
           <div className="mb-4">
-            <h3 className="text-lg font-bold text-default mb-2">AI Conversion Progress</h3>
-            <div className="border rounded-md p-1 bg-white mb-2">
-              <div style={{ width: `${progress}%` }} className="bg-primary h-2 rounded-md"></div>
+            <div className="border rounded-md bg-default text-default p-4">
+              <h3 className="text-lg font-bold text-default mb-1">AI Conversion Progress</h3>
+              <p className="mb-4 text-xs text-accent">Upload video, convert to motion with AI, upload to IPFS...</p>
+              <div className="border rounded-md p-1 bg-white mb-4">
+                <div style={{ width: `${progress}%` }} className="bg-primary h-2 rounded-md"></div>
+              </div>
+              <p className="text-xs text-default mb-1">Time: {elapsedTime}</p>
+              <p className="text-xs text-default mb-1">=====================================</p>
+              <p className="text-xs text-default mb-1">🕺 Uploading video ...</p>
+              {jobId && <p className="text-xs text-default mb-1">🕺 Job ID created: {jobId} ...</p>}
+              {jobId && <p className="text-xs text-default mb-1">🕺 Converting video to Motion ...</p>}
+              {motion && <p className="text-xs text-default mb-1">🕺 Motion Converted ...</p>}
+              {motion && <p className="text-xs text-default mb-1">🕺 Uploading to IPFS ...</p>}
+              {cid && <p className="text-xs text-default mb-1">🕺 CID created: {cid} ...</p>}
+              {cid && <p className="text-xs text-default mb-1">🕺 Generating preview ...</p>}
+              {cid && <p className="text-xs text-default mb-1">🕺 Done!</p>}
             </div>
-            <p className="text-xs text-default">Time: {elapsedTime}</p>
-            {jobId && <p className="text-xs text-default">Job ID created: {jobId}</p>}
           </div>
         )}
-        {motion && (
+        {cid && (
           <>
             <div className="mb-4">
               <div className="border rounded-md bg-default text-default p-4">
-                <h3 className="text-lg font-bold text-default mb-2">Motion Preview </h3>
+                <h3 className="text-lg font-bold text-default mb-1">Motion Preview </h3>
+                <p className="mb-4 text-xs text-accent">This is mp4 preview, bvh and fbx are also created.</p>
                 <section className="flex justify-center">
                   <video autoPlay muted loop className="background-video h-80 rounded-md shadow-sm">
                     <source src={motion.mp4} type="video/mp4" />
@@ -168,16 +226,20 @@ const UploadAndConversion: React.FC = () => {
             </div>
             <div className="mb-4">
               <div className="border rounded-md bg-default text-default p-4">
-                <h3 className="text-lg font-bold text-default mb-2">Attestation</h3>
+                <h3 className="text-lg font-bold text-default mb-1">Attestation</h3>
+                <p className="mb-4 text-xs text-accent">
+                  Create attestation with cid to verify the content is created by the trusted issuer.
+                </p>
+                <p className="text-default text-xs mb-4">CID: {cid}</p>
                 {!worldIdAttestation && (
                   <div className="flex justify-end">
                     <IDKitWidget
                       app_id="app_b2a3c336a98d489c29eb2ec29e787470"
                       action="attest"
-                      signal="here goes contnet hash"
+                      signal={cid} // use cid as signal
                       onSuccess={(attestation: any) => setWorldIdAttestation(attestation)}
                     >
-                      {({ open }) => <Button label="Anonymous Attest with World ID" onClick={open} />}
+                      {({ open }) => <Button label="Attest with World ID" onClick={open} />}
                     </IDKitWidget>
                   </div>
                 )}
@@ -199,12 +261,12 @@ const UploadAndConversion: React.FC = () => {
               <Button
                 label="Mint"
                 onClick={async () => {
-                  // const metadata = await client.store({
-                  //   name: "Test",
-                  //   description: "Test",
-                  //   image: file,
-                  // } as any);
-                  // console.log(metadata.url);
+                  const metadata = await client.store({
+                    name: "Test",
+                    description: "Test",
+                    image: file,
+                  } as any);
+                  console.log(metadata.url);
                   // router.push(`/motions/${id}`);
                 }}
               />
