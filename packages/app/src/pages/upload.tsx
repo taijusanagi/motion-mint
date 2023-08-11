@@ -21,6 +21,7 @@ import { usePublicClient } from "wagmi";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 
 import useEAS from "@/hooks/useEAS";
+import useZora from "@/hooks/useZora";
 
 const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
@@ -48,7 +49,10 @@ const UploadAndConversion: React.FC = () => {
 
   const [hash, setHash] = useState("");
   const [uid, setUid] = useState("");
-
+  const [isMintStarted, setIsMintStarted] = useState(false);
+  const [mintHash, setMintHash] = useState("");
+  const [collection, setCollection] = useState("");
+  const { zoraSubdomain } = useZora();
   const { eas, subdomain } = useEAS();
   const publicClient = usePublicClient();
 
@@ -211,7 +215,7 @@ const UploadAndConversion: React.FC = () => {
             <Checkbox label="I agree with the terms." onChange={setIsChecked} />
           </div>
         </div>
-        <div className="flex justify-end mb-8">
+        <div className="flex justify-end mb-4">
           {!isConnected && <ConnectButton />}
           {isConnected && (
             <Button
@@ -230,7 +234,7 @@ const UploadAndConversion: React.FC = () => {
                 <div style={{ width: `${progress}%` }} className="bg-primary h-2 rounded-md"></div>
               </div>
               <p className="text-xs text-default mb-1">Time: {elapsedTime}</p>
-              <p className="text-xs text-default mb-1">=================================</p>
+              <p className="text-xs text-default mb-2">=================================</p>
               <p className="text-xs text-default mb-1">🕺 Uploading video ...</p>
               {jobId && <p className="text-xs text-default mb-1">🕺 Job ID created: {jobId} ...</p>}
               {jobId && <p className="text-xs text-default mb-1">🕺 Converting video to Motion ...</p>}
@@ -289,8 +293,9 @@ const UploadAndConversion: React.FC = () => {
                     <pre className="mb-4 border rounded-lg p-4 overflow-x-scroll min-w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 shadow-2xl text-xs text-white">
                       {JSON.stringify(worldIdAttestation, null, 2)}
                     </pre>
-                    <div className="flex justify-end">
+                    <div className="flex justify-end mb-2">
                       <Button
+                        disabled={!!uid}
                         label="Create EAS attestation"
                         onClick={async () => {
                           if (!eas) {
@@ -329,79 +334,117 @@ const UploadAndConversion: React.FC = () => {
                         }}
                       />
                     </div>
-                    <p className="text-xs text-default mb-1">=================================</p>
-                    <p className="text-xs text-default mb-1">✅ World ID proof is created ...</p>
-                    <p className="text-xs text-default mb-1">✅ Waiting user to create EAS attestation ...</p>
-                    {hash && <p className="text-xs text-default mb-1">✅ Tx sent {hash} ...</p>}
-                    {hash && <p className="text-xs text-default mb-1">✅ Waiting tx confirmation ...</p>}
+                    <p className="text-xs text-default mb-2">=================================</p>
+                    <p className="text-xs text-default mb-1">🪪 World ID proof is created ...</p>
+                    <p className="text-xs text-default mb-1">🪪 Waiting user to create EAS attestation ...</p>
+                    {hash && <p className="text-xs text-default mb-1">🪪 Tx sent {hash} ...</p>}
+                    {hash && <p className="text-xs text-default mb-1">🪪 Waiting tx confirmation ...</p>}
                     {uid && (
                       <p className="text-xs text-default mb-1">
-                        ✅ EAS on-chain attestation created:{" "}
+                        🪪 EAS on-chain attestation created:{" "}
                         <a href={`https://${subdomain}.easscan.org/attestation/view/${uid}`} className="text-blue-800">
                           {uid}
                         </a>{" "}
                         ...
                       </p>
                     )}
-                    {uid && <p className="text-xs text-default mb-1">✅ Done!</p>}
+                    {uid && <p className="text-xs text-default mb-1">🪪 Done!</p>}
                   </>
                 )}
               </div>
             </div>
 
-            <div className="flex justify-end gap-2">
-              <Button label="Cancel" onClick={handleCancelClick} type="secondary" />
+            <div className="flex justify-end gap-2 mb-4">
+              {/* <Button label="Cancel" onClick={handleCancelClick} type="secondary" /> */}
               <Button
                 label="Mint"
+                // disabled={isMintStarted}
                 onClick={async () => {
+                  setCollection("");
+                  setIsMintStarted(false);
                   if (!chain || !walletClient) {
                     alert("Please connect to a wallet");
                     return;
                   }
-                  const factoryAddress = factoryAddresses[chain.network];
+                  setIsMintStarted(true);
+                  try {
+                    const factoryAddress = factoryAddresses[chain.network];
 
-                  const provider = new ethers.BrowserProvider((window as any).ethereum as any);
-                  const signer = await provider.getSigner();
-                  const contract = new ethers.Contract(factoryAddress, zoraNFTCreatorV1ABI, signer);
-                  const maxUint64 = "18446744073709551615";
-                  const maxUint32 = "4294967295";
-                  const result = await contract.createEdition(
-                    "MotionMint",
-                    "MM",
-                    maxUint64,
-                    500,
-                    address,
-                    address,
-                    {
-                      publicSalePrice: 1,
-                      maxSalePurchasePerAddress: maxUint32,
-                      // the blow param is not used for this app
-                      publicSaleStart: 0,
-                      publicSaleEnd: maxUint64,
-                      presaleStart: 0,
-                      presaleEnd: 0,
-                      presaleMerkleRoot: "0x0000000000000000000000000000000000000000000000000000000000000000",
-                    },
-                    // description contains attestations
-                    "MotionMint." + uid
-                      ? `EAS proof of personhood attestation: https://${subdomain}.easscan.org/attestation/view/${uid}`
-                      : "",
-                    // using mp4 as preview
-                    "animationURI",
-                    // no image for now
-                    "imageURI",
-                  );
+                    const provider = new ethers.BrowserProvider((window as any).ethereum as any);
+                    const signer = await provider.getSigner();
+                    const contract = new ethers.Contract(factoryAddress, zoraNFTCreatorV1ABI, signer);
+                    const maxUint64 = "18446744073709551615";
+                    const maxUint32 = "4294967295";
 
-                  const receipt = await result.wait();
-                  // This is not working well...???
-                  // console.log(result);
-                  // result.wait(Number.MIN_SAFE_INTEGER).then((receipt: any) => {
-                  //   console.log(receipt);
-                  // });
-                  // router.push(`/motions/dashboard`);
+                    const desc =
+                      uid !== ""
+                        ? `MotionMint - Content: https://ipfs.io/ipfs/${cid} - Attestation: https://${subdomain}.easscan.org/attestation/view/${uid}`
+                        : `MotionMint - Content: https://ipfs.io/ipfs/${cid}`;
+                    console.log("desc", desc);
+
+                    const video = motion.mp4.replace(/%22/g, "");
+                    console.log("video", video);
+
+                    const result = await contract.createEdition(
+                      "MotionMint",
+                      "MM",
+                      maxUint64,
+                      500,
+                      address,
+                      address,
+                      {
+                        publicSalePrice: 1,
+                        maxSalePurchasePerAddress: maxUint32,
+                        // the blow param is not used for this app
+                        publicSaleStart: 0,
+                        publicSaleEnd: maxUint64,
+                        presaleStart: 0,
+                        presaleEnd: 0,
+                        presaleMerkleRoot: "0x0000000000000000000000000000000000000000000000000000000000000000",
+                      },
+                      // description contains attestations
+                      desc,
+                      // using mp4 as preview
+                      video,
+                      // no image for now
+                      "image",
+                    );
+
+                    const receipt = await result.wait();
+                    setCollection("0x" + receipt.logs[7].topics[2].slice("00000000000000000000000000".length));
+                  } catch (error) {
+                    console.log(error);
+                    setCollection("");
+                    setIsMintStarted(false);
+                  }
                 }}
               />
             </div>
+            {isMintStarted && (
+              <div className="mb-4">
+                <div className="border rounded-md bg-default text-default p-4">
+                  <h3 className="text-lg font-bold text-default mb-1">Mint Progress</h3>
+                  <p className="mb-4 text-xs text-accent">Create motion collection on Zora...</p>
+                  <p className="text-xs text-default mb-2">=================================</p>
+                  <p className="text-xs text-default mb-1">🔗 Asking user to send tx ...</p>
+                  {mintHash && <p className="text-xs text-default mb-1">🔗 Tx sent {mintHash} ...</p>}
+                  {mintHash && <p className="text-xs text-default mb-1">🔗 Waiting tx confirmation ...</p>}
+                  {collection && (
+                    <p className="text-xs text-default mb-1">
+                      🔗 Collection created:{" "}
+                      <a
+                        href={`https://testnet.zora.co/manage/${zoraSubdomain}:${collection}`}
+                        className="text-blue-800"
+                      >
+                        {collection}
+                      </a>
+                      ...
+                    </p>
+                  )}
+                  {collection && <p className="text-xs text-default mb-1">🔗 Done!</p>}
+                </div>
+              </div>
+            )}
           </>
         )}
       </main>
