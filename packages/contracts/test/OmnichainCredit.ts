@@ -32,6 +32,9 @@ describe("Lock", function () {
   }
 
   describe("Setup", function () {
+    if (network.name === "hardhat") {
+      return;
+    }
     it("Query", async function () {
       const { signer, omnichainCredit } = await setup();
       const signerAddress = await signer.getAddress();

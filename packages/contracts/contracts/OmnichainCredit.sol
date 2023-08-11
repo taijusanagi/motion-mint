@@ -24,8 +24,9 @@ contract OmnichainCredit is NonblockingLzApp {
             credit[msg.sender] = 10;
             isNotFirstTime[msg.sender] = true;
         }
-        bytes memory payload = abi.encode(msg.sender, _usedCredit);
+
         if(_dstChainId > 0){
+            bytes memory payload = abi.encode(msg.sender, _usedCredit);
             _lzSend(_dstChainId, payload, payable(msg.sender), address(0x0), bytes(""), msg.value);
         } else {
             credit[msg.sender] -= _usedCredit;

@@ -24,6 +24,9 @@ import useEAS from "@/hooks/useEAS";
 import useZora from "@/hooks/useZora";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/Modal";
+import SelectDropdown from "@/components/SelectDropdown";
+import OmnichainCredit from "@/utils/layerzero/OmnichainCredit.json";
+import { contracts as lzContracts, chainIds as lzChainIds } from "@/utils/layerzero/networks";
 
 const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
@@ -60,6 +63,10 @@ const UploadAndConversion: React.FC = () => {
   const publicClient = usePublicClient();
 
   const [animation_url, setAnimation_url] = useState("");
+  const [target, setTarget] = useState("optimism-goerli");
+  const [creditHash, setCreditHash] = useState("");
+  const [skipCredit, setSkipCredit] = useState("");
+  // const [targetChainId, setTargetChainId] = useState(0);
 
   function formatElapsedTime(milliseconds: number) {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -99,12 +106,51 @@ const UploadAndConversion: React.FC = () => {
     if (file) {
       setIsLoading(true);
       setProgress(0);
-      if (!file) {
+      setCreditHash("");
+      setSkipCredit("");
+      // setTargetChainId(0);
+      // setDepositMs("");
+      if (!file || !chain) {
+        setIsLoading(false);
         return;
       }
+
       const startTime = new Date().getTime();
       const formData = new FormData();
       formData.append("video", file);
+
+      if (chain.id !== 999) {
+        const provider = new ethers.BrowserProvider((window as any).ethereum as any);
+        const signer = await provider.getSigner();
+        console.log("chain.network", chain.network);
+        console.log("target", target);
+
+        let targetChainId = 0;
+        if (chain.network === target) {
+          targetChainId = 0;
+        } else {
+          targetChainId = lzChainIds[target];
+        }
+        console.log(lzContracts[chain.network]);
+        const lzContract = new ethers.Contract(lzContracts[chain.network], OmnichainCredit.abi, signer);
+        console.log("creditContract", lzContract);
+        // const tx = await lzContract.useCredit(0, 1);
+        // console.log(tx);
+        console.log(targetChainId);
+        const c = await lzContract.credit(address);
+        console.log("c", c);
+
+        const { hash } = await lzContract.useCredit(targetChainId, 1, {
+          value: ethers.parseEther(targetChainId == 0 ? "0" : "0.001"),
+        });
+        setCreditHash(hash);
+        // setTargetChainId(targetChainId);
+        // contract.
+      } else {
+        // "skip"
+        setCreditHash("undefined");
+        setSkipCredit("Credit payment is skipped for Zora Testnet because of the Layer Zero compatibility.");
+      }
 
       // const createJobResponse = await fetch("/api/createJob", {
       //   method: "POST",
@@ -182,6 +228,7 @@ const UploadAndConversion: React.FC = () => {
           );
           setCid(cid);
           console.log(cid);
+          setCreditHash("");
           setProgress(100);
           setIsLoading(false);
         }
@@ -233,15 +280,25 @@ const UploadAndConversion: React.FC = () => {
             {isConnected && (
               <>
                 <p className="mb-2 text-default text-xs">Account: {address}</p>
-                <p className="mb-2 text-default text-xs">Credit: 100 dummy</p>
-                <div className="flex justify-end gap-2">
-                  <Button
+                <p className="mb-4 text-default text-xs">Credit: 30 dummy</p>
+                <p className="mb-2 text-default font-bold text-sm">Use credit on</p>
+                <p className="mb-2 text-xs text-accent">Use cross-chain credit with LayerZero.</p>
+                <div className="w-40">
+                  <SelectDropdown
+                    onSelectChange={setTarget}
+                    options={[
+                      { label: "Optimism Goerli", value: "optimism-goerli" },
+                      { label: "Base Goerli", value: "base-goerli" },
+                    ]}
+                  />
+                </div>
+                {/* <Button
                     label="Setting"
                     onClick={() => {
                       openModal();
                     }}
-                  />
-                </div>
+                  /> */}
+
                 <Modal isOpen={isOpen} closeModal={closeModal}>
                   <h3 className="text-lg font-bold text-default mb-1">Manage Credit</h3>
                   <div className="mt-2">
@@ -300,7 +357,12 @@ const UploadAndConversion: React.FC = () => {
                   </div>
                   <p className="text-xs text-default mb-1">Time: {elapsedTime}</p>
                   <p className="text-xs text-default mb-2">=================================</p>
-                  <p className="text-xs text-default mb-1">🕺 Uploading video ...</p>
+                  <p className="text-xs text-default mb-1">
+                    🕺 Credit required, paying on {target.replace("-", " ")} ...
+                  </p>
+                  {skipCredit && <p className="text-xs text-default mb-1">🕺 {skipCredit} ...</p>}
+                  {creditHash && <p className="text-xs text-default mb-1">🕺 Use credit tx {creditHash} ...</p>}
+                  {creditHash && <p className="text-xs text-default mb-1">🕺 Uploading video ...</p>}
                   {jobId && <p className="text-xs text-default mb-1">🕺 Job ID created: {jobId} ...</p>}
                   {jobId && <p className="text-xs text-default mb-1">🕺 Converting video to Motion ...</p>}
                   {motion && <p className="text-xs text-default mb-1">🕺 Motion converted ...</p>}

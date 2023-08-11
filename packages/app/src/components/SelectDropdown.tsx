@@ -3,12 +3,11 @@
 import React, { useState } from "react";
 
 interface SelectProps {
-  label: string;
   options: { value: string; label: string }[];
   onSelectChange?: (selectedValue: string) => void;
 }
 
-const SelectDropdown: React.FC<SelectProps> = ({ label, options, onSelectChange }) => {
+const SelectDropdown: React.FC<SelectProps> = ({ options, onSelectChange }) => {
   const [selectedValue, setSelectedValue] = useState<string>("");
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -17,22 +16,22 @@ const SelectDropdown: React.FC<SelectProps> = ({ label, options, onSelectChange 
   };
 
   return (
-    <div className="bg-default shadow-sm p-2 rounded-md">
-      <label className="mb-2 block text-default">
-        {label}
-        <select
-          value={selectedValue}
-          onChange={handleChange}
-          className="block w-full mt-1 bg-default text-default rounded-md border border-primary shadow-sm focus:border-accent"
-        >
-          {options.map((option, index) => (
-            <option key={index} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
-    </div>
+    // <div className="bg-default shadow-sm p-2 rounded-md">
+    // <label className="mb-2 block text-default">
+    // {label}
+    <select
+      value={selectedValue}
+      onChange={handleChange}
+      className="block w-full p-2 bg-default text-default text-sm rounded-md border border-primary shadow-sm focus:border-accent"
+    >
+      {options.map((option, index) => (
+        <option key={index} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+    // </label>
+    // </div>
   );
 };
 
