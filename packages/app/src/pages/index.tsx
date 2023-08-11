@@ -28,7 +28,7 @@ export default function LandingPage() {
             onClick={() => {
               if (!isConnected) {
               } else {
-                router.push("/dashboard");
+                router.push("/upload");
               }
             }}
           />

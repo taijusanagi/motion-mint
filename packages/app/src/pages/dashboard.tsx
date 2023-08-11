@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import Button from "@/components/Button";
 import { FaPlus } from "react-icons/fa";
+// import useZora from "@/hooks/useZora";
+// import { useEffect } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +19,7 @@ interface Motion {
 
 export default function Dashboard() {
   const router = useRouter();
+  // const { zdk } = useZora();
 
   const userMotions: Motion[] = [
     { id: "1", title: "Motion 1", status: "Converted", thumbnailUrl: "https://via.placeholder.com/400" },
@@ -36,7 +39,7 @@ export default function Dashboard() {
       <Header />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
         <section className="mb-8">
-          <h2 className="text-2xl font-bold text-default mb-2">Your Motion</h2>
+          <h2 className="text-2xl font-bold text-default mb-2">Mock - Your Motion</h2>
           <p className="mb-4 text-xs text-accent">Created motions are displayed here.</p>
           <ul>
             {userMotions.map((motion, idx) => (
@@ -47,10 +50,13 @@ export default function Dashboard() {
                   router.push(`/motions/${motion.id}`);
                 }}
               >
-                <img src={motion.thumbnailUrl} alt={motion.title} className="w-32 h-18 rounded-md object-cover mr-4" />
+                <video autoPlay muted loop className="background-video w-32 rounded-md shadow-sm mr-2">
+                  <source src="/demo.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
                 <div>
                   <h3 className="font-bold">{motion.title}</h3>
-                  <p>Status: {motion.status}</p>
+                  <p>Attestation: </p>
                 </div>
               </li>
             ))}

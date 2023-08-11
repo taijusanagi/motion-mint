@@ -55,7 +55,7 @@ const Market: React.FC = () => {
     >
       <Header />
       <main className="flex-1 mx-auto w-full max-w-4xl py-12 px-4 relative">
-        <h2 className="text-2xl font-bold text-default mb-2">Market</h2>
+        <h2 className="text-2xl font-bold text-default mb-2">Mock - Market</h2>
         <p className="mb-4 text-xs text-accent">
           Motion data listed on market. Go to motion detail page to test buy/sell functinality.
         </p>
@@ -68,11 +68,10 @@ const Market: React.FC = () => {
                 router.push(`/motions/${motion.id}`);
               }}
             >
-              <img
-                src={motion.thumbnailUrl}
-                alt="Motion Thumbnail"
-                className="mb-2 w-full h-40 object-cover rounded-md"
-              />
+              <video autoPlay muted loop className="background-video rounded-md shadow-sm mb-4">
+                <source src="/demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
               <p className="font-bold mb-4 text-right">${motion.price.toFixed(2)}</p>
               <div className="flex justify-between items-center">
                 <p className="text-xs mr-2">{motion.licenseType}</p>

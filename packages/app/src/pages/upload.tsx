@@ -238,12 +238,12 @@ const UploadAndConversion: React.FC = () => {
               <div className="border rounded-md bg-default text-default p-4">
                 <h3 className="text-lg font-bold text-default mb-1">Motion Preview </h3>
                 <p className="mb-4 text-xs text-accent">This is mp4 preview, bvh and fbx are also created.</p>
-                <section className="flex justify-center">
+                <div className="flex justify-center">
                   <video autoPlay muted loop className="background-video h-80 rounded-md shadow-sm">
                     <source src={motion.mp4} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
-                </section>
+                </div>
               </div>
             </div>
             <div className="mb-4">

@@ -34,6 +34,11 @@ const Header: React.FC = () => {
                       Market
                     </Link>
                   </li>
+                  <li>
+                    <Link href="/upload" className="block text-default hover:text-primary px-4 py-2">
+                      Create
+                    </Link>
+                  </li>
                 </ul>
               </nav>
             </div>
