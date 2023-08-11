@@ -46,9 +46,29 @@ https://optimism-goerli-bedrock.easscan.org/schema/view/0x97e1d46622e995367fa950
 
 - **WorldCoin**: This service allows users to sign in with WorldCoin and also provides human verification functionalities, ensuring genuine user interactions.
 
-### Hyperlane Cross-chain Messaging
+### LayerZero Cross-chain Messaging
 
 Given the multi-chain nature of MotionMint's deployment, **Hyperlane Cross-chain Messaging** is employed to ensure synchronization between the Base and Zora networks. This ensures that data and transactions are consistent and updated across different blockchain networks.
+
+### Optimism -> Base
+
+#### Source chain exproler
+
+https://goerli-optimism.etherscan.io/tx/0x6e60e9bfc79cdeac5a1f95e0af39d9f65d89780b3771961466e48a97e6034152
+
+#### LayerZero Exproler
+
+https://testnet.layerzeroscan.com/10132/address/0xf989e98e1cc730fc4b4d4754baf83892218fd09f/message/10160/address/0xf1b98dd8ff1592bbae96a96bd6261ffa5eb90301/nonce/1
+
+### Base -> Optimism
+
+#### Source chain exproler
+
+https://goerli.basescan.org/tx/0x776b38d1b87d33111b1054b26d4d022cd79fe9289e3baff9c363c768df90adb3
+
+#### LayerZero Exproler
+
+https://testnet.layerzeroscan.com/10160/address/0xf1b98dd8ff1592bbae96a96bd6261ffa5eb90301/message/10132/address/0xf989e98e1cc730fc4b4d4754baf83892218fd09f/nonce/1
 
 ### Data Aggregation
 

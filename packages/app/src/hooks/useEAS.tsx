@@ -26,7 +26,7 @@ const useEAS = () => {
     } else if (chain.id === 420) {
       //Optimism Georli
       eas = new EAS(easAddresses["optimism-goerli"]);
-      eas.connect(ethers.getDefaultProvider("optimism-goerli"));
+      // eas.connect(ethers.getDefaultProvider("optimism-goerli"));
       setSubdomain(easSubDomain["optimism-goerli"]);
     } else if (chain.id === 999) {
       //ZORA Georli
@@ -36,7 +36,7 @@ const useEAS = () => {
     } else if (chain.id === 84531) {
       //Base Georli
       eas = new EAS(easAddresses["base-goerli"]);
-      eas.connect(ethers.getDefaultProvider("base-goerli"));
+      // eas.connect(ethers.("base-goerli"));
       setSubdomain(easSubDomain["base-goerli"]);
     } else {
       setEAS(undefined);
