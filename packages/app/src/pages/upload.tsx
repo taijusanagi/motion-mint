@@ -46,7 +46,10 @@ const UploadAndConversion: React.FC = () => {
   const { chain } = useNetwork();
   const { data: walletClient } = useWalletClient();
 
-  const { eas } = useEAS();
+  const [hash, setHash] = useState("");
+  const [uid, setUid] = useState("");
+
+  const { eas, subdomain } = useEAS();
   const publicClient = usePublicClient();
 
   function formatElapsedTime(milliseconds: number) {
@@ -233,7 +236,15 @@ const UploadAndConversion: React.FC = () => {
               {jobId && <p className="text-xs text-default mb-1">🕺 Converting video to Motion ...</p>}
               {motion && <p className="text-xs text-default mb-1">🕺 Motion converted ...</p>}
               {motion && <p className="text-xs text-default mb-1">🕺 Uploading to IPFS ...</p>}
-              {cid && <p className="text-xs text-default mb-1">🕺 CID created: {cid} ...</p>}
+              {cid && (
+                <p className="text-xs text-default mb-1">
+                  🕺 CID created:{" "}
+                  <a href={`https://ipfs.io/ipfs/${cid}`} className="text-blue-800">
+                    {cid}
+                  </a>
+                  ...
+                </p>
+              )}
               {cid && <p className="text-xs text-default mb-1">🕺 Generating preview ...</p>}
               {cid && <p className="text-xs text-default mb-1">🕺 Done!</p>}
             </div>
@@ -296,8 +307,11 @@ const UploadAndConversion: React.FC = () => {
                             { name: "merkle_root", value: worldIdAttestation.merkle_root, type: "bytes32" },
                             { name: "credential_type", value: worldIdAttestation.credential_type, type: "string" },
                           ]);
-                          eas.connect(walletClient as any);
-                          const tx = await eas.attest({
+                          // some bug maybe in wagmi, so workaround here
+                          const provider = new ethers.BrowserProvider((window as any).ethereum as any);
+                          const signer = await provider.getSigner();
+                          eas.connect(signer);
+                          const { tx } = await eas.attest({
                             schema: "0x97e1d46622e995367fa950d673c978650f37303fb7feabe0041e3b8d5e554c17",
                             data: {
                               recipient: address as string,
@@ -306,10 +320,30 @@ const UploadAndConversion: React.FC = () => {
                               data: encodedData,
                             },
                           });
-                          console.log(await tx.wait());
+                          setHash(tx.hash);
+                          console.log("tx", tx);
+                          const receipt = await tx.wait();
+                          const uid = receipt?.logs[0].data;
+                          console.log("EAS uid", uid);
+                          setUid(uid as string);
                         }}
                       />
                     </div>
+                    <p className="text-xs text-default mb-1">=================================</p>
+                    <p className="text-xs text-default mb-1">✅ World ID proof is created ...</p>
+                    <p className="text-xs text-default mb-1">✅ Waiting user to create EAS attestation ...</p>
+                    {hash && <p className="text-xs text-default mb-1">✅ Tx sent {hash} ...</p>}
+                    {hash && <p className="text-xs text-default mb-1">✅ Waiting tx confirmation ...</p>}
+                    {uid && (
+                      <p className="text-xs text-default mb-1">
+                        ✅ EAS on-chain attestation created:{" "}
+                        <a href={`https://${subdomain}.easscan.org/attestation/view/${uid}`} className="text-blue-800">
+                          {uid}
+                        </a>{" "}
+                        ...
+                      </p>
+                    )}
+                    {uid && <p className="text-xs text-default mb-1">✅ Done!</p>}
                   </>
                 )}
               </div>
@@ -325,7 +359,10 @@ const UploadAndConversion: React.FC = () => {
                     return;
                   }
                   const factoryAddress = factoryAddresses[chain.network];
-                  const contract = new ethers.Contract(factoryAddress, zoraNFTCreatorV1ABI, walletClient as any);
+
+                  const provider = new ethers.BrowserProvider((window as any).ethereum as any);
+                  const signer = await provider.getSigner();
+                  const contract = new ethers.Contract(factoryAddress, zoraNFTCreatorV1ABI, signer);
                   const maxUint64 = "18446744073709551615";
                   const maxUint32 = "4294967295";
                   const result = await contract.createEdition(
@@ -346,18 +383,22 @@ const UploadAndConversion: React.FC = () => {
                       presaleMerkleRoot: "0x0000000000000000000000000000000000000000000000000000000000000000",
                     },
                     // description contains attestations
-                    "description",
+                    "MotionMint." + uid
+                      ? `EAS proof of personhood attestation: https://${subdomain}.easscan.org/attestation/view/${uid}`
+                      : "",
                     // using mp4 as preview
                     "animationURI",
                     // no image for now
                     "imageURI",
                   );
+
+                  const receipt = await result.wait();
                   // This is not working well...???
                   // console.log(result);
                   // result.wait(Number.MIN_SAFE_INTEGER).then((receipt: any) => {
                   //   console.log(receipt);
                   // });
-                  router.push(`/motions/dashboard`);
+                  // router.push(`/motions/dashboard`);
                 }}
               />
             </div>
