@@ -9,6 +9,14 @@ import Checkbox from "@/components/CheckBox";
 import { IDKitWidget } from "@worldcoin/idkit";
 import { NFTStorage, File } from "nft.storage";
 import { NFT_STORAGE_API_KEY } from "@/config";
+import { ethers } from "ethers";
+import { useNetwork } from "wagmi";
+import useIsConnected from "@/hooks/useIsConnected";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
+import { factoryAddresses } from "@/utils/zora/factoryAddresses";
+import { zoraNFTCreatorV1ABI } from "@/utils/zora/zoraNFTCreatorV1ABI";
+import { useWalletClient } from "wagmi";
 
 const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
@@ -28,6 +36,11 @@ const UploadAndConversion: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [elapsedTime, setElapsedTime] = useState("0h 0m 0s");
+
+  const { isConnected } = useIsConnected();
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+  const { data: walletClient } = useWalletClient();
 
   function formatElapsedTime(milliseconds: number) {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -133,6 +146,10 @@ const UploadAndConversion: React.FC = () => {
                     trait_type: "fbx",
                     value: downloadData.result.fbx,
                   },
+                  {
+                    trait_type: "creator",
+                    value: address,
+                  },
                 ],
               }),
             ]),
@@ -155,7 +172,9 @@ const UploadAndConversion: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}>
+    <div
+      className={`break-all min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}
+    >
       <Header />
       <main className="flex-1 mx-auto w-full max-w-2xl py-12 px-4 relative">
         <h2 className="text-2xl font-bold text-default mb-1">Create Motion</h2>
@@ -183,11 +202,14 @@ const UploadAndConversion: React.FC = () => {
           </div>
         </div>
         <div className="flex justify-end mb-8">
-          <Button
-            label="Start Convert"
-            onClick={handleConvertClick}
-            disabled={!file || !isChecked || isLoading || motion}
-          />
+          {!isConnected && <ConnectButton />}
+          {isConnected && (
+            <Button
+              label="Start Convert"
+              onClick={handleConvertClick}
+              disabled={!file || !isChecked || isLoading || motion}
+            />
+          )}
         </div>
         {(isLoading || motion) && (
           <div className="mb-4">
@@ -198,11 +220,11 @@ const UploadAndConversion: React.FC = () => {
                 <div style={{ width: `${progress}%` }} className="bg-primary h-2 rounded-md"></div>
               </div>
               <p className="text-xs text-default mb-1">Time: {elapsedTime}</p>
-              <p className="text-xs text-default mb-1">=====================================</p>
+              <p className="text-xs text-default mb-1">=================================</p>
               <p className="text-xs text-default mb-1">🕺 Uploading video ...</p>
               {jobId && <p className="text-xs text-default mb-1">🕺 Job ID created: {jobId} ...</p>}
               {jobId && <p className="text-xs text-default mb-1">🕺 Converting video to Motion ...</p>}
-              {motion && <p className="text-xs text-default mb-1">🕺 Motion Converted ...</p>}
+              {motion && <p className="text-xs text-default mb-1">🕺 Motion converted ...</p>}
               {motion && <p className="text-xs text-default mb-1">🕺 Uploading to IPFS ...</p>}
               {cid && <p className="text-xs text-default mb-1">🕺 CID created: {cid} ...</p>}
               {cid && <p className="text-xs text-default mb-1">🕺 Generating preview ...</p>}
@@ -230,6 +252,7 @@ const UploadAndConversion: React.FC = () => {
                 <p className="mb-4 text-xs text-accent">
                   Create attestation with cid to verify the content is created by the trusted issuer.
                 </p>
+                <p className="text-default text-xs mb-2">Creator: {address}</p>
                 <p className="text-default text-xs mb-4">CID: {cid}</p>
                 {!worldIdAttestation && (
                   <div className="flex justify-end">
@@ -261,13 +284,44 @@ const UploadAndConversion: React.FC = () => {
               <Button
                 label="Mint"
                 onClick={async () => {
-                  const metadata = await client.store({
-                    name: "Test",
-                    description: "Test",
-                    image: file,
-                  } as any);
-                  console.log(metadata.url);
-                  // router.push(`/motions/${id}`);
+                  if (!chain || !walletClient) {
+                    alert("Please connect to a wallet");
+                    return;
+                  }
+                  const factoryAddress = factoryAddresses[chain.network];
+                  const contract = new ethers.Contract(factoryAddress, zoraNFTCreatorV1ABI, walletClient as any);
+                  const maxUint64 = "18446744073709551615";
+                  const maxUint32 = "4294967295";
+                  const result = await contract.createEdition(
+                    "MotionMint",
+                    "MM",
+                    maxUint64,
+                    500,
+                    address,
+                    address,
+                    {
+                      publicSalePrice: 1,
+                      maxSalePurchasePerAddress: maxUint32,
+                      // the blow param is not used for this app
+                      publicSaleStart: 0,
+                      publicSaleEnd: maxUint64,
+                      presaleStart: 0,
+                      presaleEnd: 0,
+                      presaleMerkleRoot: "0x0000000000000000000000000000000000000000000000000000000000000000",
+                    },
+                    // description contains attestations
+                    "description",
+                    // using mp4 as preview
+                    "animationURI",
+                    // no image for now
+                    "imageURI",
+                  );
+                  // This is not working well...???
+                  // console.log(result);
+                  // result.wait(Number.MIN_SAFE_INTEGER).then((receipt: any) => {
+                  //   console.log(receipt);
+                  // });
+                  router.push(`/motions/dashboard`);
                 }}
               />
             </div>
