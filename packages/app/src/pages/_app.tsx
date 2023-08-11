@@ -4,10 +4,10 @@ import type { AppProps } from "next/app";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { goerli, optimismGoerli, baseGoerli, zoraTestnet } from "wagmi/chains";
+import { optimismGoerli, baseGoerli, zoraTestnet } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
-const { chains, publicClient } = configureChains([goerli, optimismGoerli, baseGoerli, zoraTestnet], [publicProvider()]);
+const { chains, publicClient } = configureChains([optimismGoerli, baseGoerli, zoraTestnet], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
   appName: "MotionMint",

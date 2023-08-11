@@ -17,6 +17,10 @@ import { useAccount } from "wagmi";
 import { factoryAddresses } from "@/utils/zora/factoryAddresses";
 import { zoraNFTCreatorV1ABI } from "@/utils/zora/zoraNFTCreatorV1ABI";
 import { useWalletClient } from "wagmi";
+import { usePublicClient } from "wagmi";
+import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
+
+import useEAS from "@/hooks/useEAS";
 
 const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
@@ -31,7 +35,7 @@ const UploadAndConversion: React.FC = () => {
   const [cid, setCid] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
-  const [worldIdAttestation, setWorldIdAttestation] = useState();
+  const [worldIdAttestation, setWorldIdAttestation] = useState<any>();
   const [isChecked, setIsChecked] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +45,9 @@ const UploadAndConversion: React.FC = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { data: walletClient } = useWalletClient();
+
+  const { eas } = useEAS();
+  const publicClient = usePublicClient();
 
   function formatElapsedTime(milliseconds: number) {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -272,7 +279,36 @@ const UploadAndConversion: React.FC = () => {
                       {JSON.stringify(worldIdAttestation, null, 2)}
                     </pre>
                     <div className="flex justify-end">
-                      <Button label="Publish to EAS" />
+                      <Button
+                        label="Create EAS attestation"
+                        onClick={async () => {
+                          if (!eas) {
+                            alert("Current network does not support EAS");
+                            return;
+                          }
+                          const schemaEncoder = new SchemaEncoder(
+                            "string CID,bytes32 nullifier_hash,bytes proof,bytes32 merkle_root,string credential_type",
+                          );
+                          const encodedData = schemaEncoder.encodeData([
+                            { name: "CID", value: cid, type: "string" },
+                            { name: "nullifier_hash", value: worldIdAttestation.nullifier_hash, type: "bytes32" },
+                            { name: "proof", value: worldIdAttestation.proof, type: "bytes" },
+                            { name: "merkle_root", value: worldIdAttestation.merkle_root, type: "bytes32" },
+                            { name: "credential_type", value: worldIdAttestation.credential_type, type: "string" },
+                          ]);
+                          eas.connect(walletClient as any);
+                          const tx = await eas.attest({
+                            schema: "0x97e1d46622e995367fa950d673c978650f37303fb7feabe0041e3b8d5e554c17",
+                            data: {
+                              recipient: address as string,
+                              expirationTime: 0 as any,
+                              revocable: true,
+                              data: encodedData,
+                            },
+                          });
+                          console.log(await tx.wait());
+                        }}
+                      />
                     </div>
                   </>
                 )}

@@ -39,6 +39,11 @@ The marketplace where creators can monetize their motion data is built upon the 
 Licensing and rights management are crucial aspects of MotionMint. The **License Management** system integrates:
 
 - **EAS (Ethereum Attestation Service)**: Used to manage the licensing of motion data. It ensures that licensing terms are adhered to and provides a mechanism for verification of rights and ownership.
+
+#### Created Schema
+
+https://optimism-goerli-bedrock.easscan.org/schema/view/0x97e1d46622e995367fa950d673c978650f37303fb7feabe0041e3b8d5e554c17
+
 - **WorldCoin**: This service allows users to sign in with WorldCoin and also provides human verification functionalities, ensuring genuine user interactions.
 
 ### Hyperlane Cross-chain Messaging

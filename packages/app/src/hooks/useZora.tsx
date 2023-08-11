@@ -8,15 +8,14 @@ const useZora = () => {
 
   useEffect(() => {
     if (!chain) {
+      setZDK(undefined);
       return;
     }
     let networkInfo = {} as any;
     if (chain.id === 5) {
       //Ethereum Georli
-      networkInfo = {
-        network: ZDKNetwork.Ethereum,
-        chain: ZDKChain.Goerli,
-      };
+      setZDK(undefined);
+      return;
     } else if (chain.id === 420) {
       //Optimism Georli
       networkInfo = {
@@ -36,6 +35,7 @@ const useZora = () => {
         chain: ZDKChain.BaseGoerli,
       };
     } else {
+      setZDK(undefined);
       return;
     }
     const API_ENDPOINT = "https://api.zora.co/graphql";
