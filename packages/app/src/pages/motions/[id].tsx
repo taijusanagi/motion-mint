@@ -23,12 +23,6 @@ const MotionDataDetail: React.FC = () => {
             </video>
           </div>
         </div>
-        <div className="border rounded-md shadow-sm p-4 mb-6 bg-default">
-          <h3 className="text-lg font-bold text-accent font-bold mb-2">Thank you for your purchase!</h3>
-          <a href="#" className="underline">
-            Mock Access Link
-          </a>
-        </div>
       </main>
     </div>
   );

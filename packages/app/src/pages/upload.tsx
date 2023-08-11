@@ -376,11 +376,18 @@ const UploadAndConversion: React.FC = () => {
                 )}
               </div>
             </div>
-
+            <div className="mb-4">
+              <div className="border rounded-md bg-default text-default p-4">
+                <h3 className="text-lg font-bold text-default mb-1">Setting</h3>
+                <p className="mb-4 text-xs text-accent">Setting is out of scope of this hackathon.</p>
+                <p className="mb-2 text-default text-sm">Name: MotionMint</p>
+                <p className="mb-2 text-default text-sm">Price: 0.01 ETH</p>
+              </div>
+            </div>
             <div className="flex justify-end gap-2 mb-4">
               {/* <Button label="Cancel" onClick={handleCancelClick} type="secondary" /> */}
               <Button
-                label="Mint"
+                label="Mint & Sell"
                 // disabled={isMintStarted}
                 onClick={async () => {
                   setCollection("");
@@ -416,7 +423,7 @@ const UploadAndConversion: React.FC = () => {
                       address,
                       address,
                       {
-                        publicSalePrice: 1,
+                        publicSalePrice: "10000000000000000",
                         maxSalePurchasePerAddress: maxUint32,
                         // the blow param is not used for this app
                         publicSaleStart: 0,
