@@ -56,6 +56,8 @@ const UploadAndConversion: React.FC = () => {
   const { eas, subdomain } = useEAS();
   const publicClient = usePublicClient();
 
+  const [animation_url, setAnimation_url] = useState("");
+
   function formatElapsedTime(milliseconds: number) {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -144,6 +146,13 @@ const UploadAndConversion: React.FC = () => {
           // Assuming 'setMotion' is a state setter, update it here or move to next process
           setMotion(downloadData.result);
 
+          const file = await fetchVideoAndConvertToFile(downloadData.result.mp4);
+
+          console.log(file);
+          const animationCid = await client.storeDirectory([file]);
+          console.log("animationCid", animationCid);
+          const animation_url = `https://ipfs.io/ipfs/${animationCid}/motion.mp4`;
+          setAnimation_url(animation_url);
           // Upload to NFT Storage
           const cid = await client.storeBlob(
             new Blob([
@@ -184,6 +193,20 @@ const UploadAndConversion: React.FC = () => {
       fileInputRef.current.value = "";
     }
   };
+
+  async function fetchVideoAndConvertToFile(url: string) {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const blob = await response.blob();
+
+    // Convert the blob to a File object
+    const file = new File([blob], "motion.mp4", { type: blob.type });
+
+    return file;
+  }
 
   return (
     <div
@@ -382,8 +405,8 @@ const UploadAndConversion: React.FC = () => {
                         : `MotionMint - Content: https://ipfs.io/ipfs/${cid}`;
                     console.log("desc", desc);
 
-                    const video = motion.mp4.replace(/%22/g, "");
-                    console.log("video", video);
+                    // const video = motion.mp4.replace(/%22/g, "");
+                    console.log("video", animation_url);
 
                     const result = await contract.createEdition(
                       "MotionMint",
@@ -405,9 +428,9 @@ const UploadAndConversion: React.FC = () => {
                       // description contains attestations
                       desc,
                       // using mp4 as preview
-                      video,
-                      // no image for now
-                      "image",
+                      animation_url,
+                      // hardcode image for now
+                      "https://raw.githubusercontent.com/taijusanagi/motion-mint/main/docs/img/logo.png?token=GHSAT0AAAAAACF2AHGH2KMS5TODOCW36NCYZGV3KXQ",
                     );
 
                     const receipt = await result.wait();
