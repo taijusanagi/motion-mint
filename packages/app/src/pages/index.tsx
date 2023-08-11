@@ -72,6 +72,10 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+        <section className="py-8 text-center">
+          <h2 className="text-3xl font-bold text-default mb-8">Technical Detail</h2>
+          <img src="/diagram.png" alt="MotionMint" className="mx-auto" />
+        </section>
       </main>
       <Footer />
     </div>
