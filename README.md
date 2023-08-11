@@ -12,12 +12,6 @@ MotionMint is where videos evolve into valuable motion data, enabling creators t
 
 MotionMint is revolutionizing the way we perceive and utilize video content. By harnessing the power of advanced AI, it effortlessly converts videos into rich motion data. But it doesn't stop there. Creators are given a unique platform to not only showcase and share their motion masterpieces but also to monetize them. Dive into the future of motion data, where every movement holds value and potential.
 
-## Demo
-
-### Converted Motion
-
-![diagram](./packages/app/public/demo.mp4)
-
 ## Benefit
 
 1. Seamless Conversion: Transform videos into motion data effortlessly with cutting-edge AI.
