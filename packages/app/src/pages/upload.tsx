@@ -1,6 +1,6 @@
 // pages/upload.tsx
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
 import Header from "@/components/Header";
@@ -68,6 +68,9 @@ const UploadAndConversion: React.FC = () => {
   const [skipCredit, setSkipCredit] = useState("");
   // const [targetChainId, setTargetChainId] = useState(0);
 
+  const [opCredit, setOpCredit] = useState(0);
+  const [bsCredit, setBsCredit] = useState(0);
+
   function formatElapsedTime(milliseconds: number) {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -120,6 +123,11 @@ const UploadAndConversion: React.FC = () => {
       formData.append("video", file);
 
       if (chain.id !== 999) {
+        if (opCredit + bsCredit === 0) {
+          alert("You need to have credit on the Optimism or Base networks to run.");
+          setIsLoading(false);
+          return;
+        }
         const provider = new ethers.BrowserProvider((window as any).ethereum as any);
         const signer = await provider.getSigner();
         console.log("chain.network", chain.network);
@@ -137,17 +145,19 @@ const UploadAndConversion: React.FC = () => {
         // const tx = await lzContract.useCredit(0, 1);
         // console.log(tx);
         console.log(targetChainId);
-        const c = await lzContract.credit(address);
-        console.log("c", c);
+        // const c = await lzContract.getCredit(address);
+        // console.log("c", c);
 
         const { hash } = await lzContract.useCredit(targetChainId, 1, {
-          value: ethers.parseEther(targetChainId == 0 ? "0" : "0.001"),
+          value: ethers.parseEther(targetChainId == 0 ? "0" : "0.005"),
         });
         setCreditHash(hash);
         // setTargetChainId(targetChainId);
         // contract.
       } else {
         // "skip"
+        setIsLoading(false);
+        setProgress(0);
         setCreditHash("undefined");
         setSkipCredit("Credit payment is skipped for Zora Testnet because of the Layer Zero compatibility.");
       }
@@ -258,6 +268,23 @@ const UploadAndConversion: React.FC = () => {
     return file;
   }
 
+  useEffect(() => {
+    if (!address) {
+      return;
+    }
+    const optimismProvider = new ethers.JsonRpcProvider("https://goerli.optimism.io");
+    const baseProvider = new ethers.JsonRpcProvider("https://goerli.base.org");
+
+    const opContract = new ethers.Contract(lzContracts["optimism-goerli"], OmnichainCredit.abi, optimismProvider);
+    const bsContract = new ethers.Contract(lzContracts["base-goerli"], OmnichainCredit.abi, baseProvider);
+    opContract.getCredit(address).then((credit) => {
+      setOpCredit(Number(credit));
+    });
+    bsContract.getCredit(address).then((credit) => {
+      setBsCredit(Number(credit));
+    });
+  }, [address]);
+
   return (
     <div
       className={`break-all min-h-screen flex flex-col bg-gradient-to-r from-green-100 to-blue-100 ${inter.className}`}
@@ -280,35 +307,44 @@ const UploadAndConversion: React.FC = () => {
             {isConnected && (
               <>
                 <p className="mb-2 text-default text-xs">Account: {address}</p>
-                <p className="mb-4 text-default text-xs">Credit: 30 dummy</p>
-                <p className="mb-2 text-default font-bold text-sm">Use credit on</p>
-                <p className="mb-2 text-xs text-accent">Use cross-chain credit with LayerZero.</p>
-                <div className="w-40">
-                  <SelectDropdown
-                    onSelectChange={setTarget}
-                    options={[
-                      { label: "Optimism Goerli", value: "optimism-goerli" },
-                      { label: "Base Goerli", value: "base-goerli" },
-                    ]}
-                  />
-                </div>
-                {/* <Button
+                {chain?.id !== 999 && (
+                  <>
+                    <p className="mb-4 text-default text-xs">Total Credit: {opCredit + bsCredit}</p>
+
+                    <p className="mb-2 text-default font-bold text-sm">Use credit on</p>
+                    <p className="mb-2 text-xs text-accent">Use cross-chain credit with LayerZero.</p>
+                    <p className="mb-2 text-default text-xs">
+                      - Optimism: {opCredit} Base: {bsCredit}
+                    </p>
+                    <div className="w-40">
+                      <SelectDropdown
+                        onSelectChange={setTarget}
+                        options={[
+                          { label: "Optimism Goerli", value: "optimism-goerli" },
+                          { label: "Base Goerli", value: "base-goerli" },
+                        ]}
+                      />
+                    </div>
+
+                    {/* <Button
                     label="Setting"
                     onClick={() => {
                       openModal();
                     }}
                   /> */}
 
-                <Modal isOpen={isOpen} closeModal={closeModal}>
-                  <h3 className="text-lg font-bold text-default mb-1">Manage Credit</h3>
-                  <div className="mt-2">
-                    {/* {credential && (
+                    <Modal isOpen={isOpen} closeModal={closeModal}>
+                      <h3 className="text-lg font-bold text-default mb-1">Manage Credit</h3>
+                      <div className="mt-2">
+                        {/* {credential && (
                       <pre className="mb-4 border rounded-lg p-4 overflow-x-scroll min-w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 shadow-2xl text-xs text-white">
                         {JSON.stringify(credential, null, 2)}
                       </pre>
                     )} */}
-                  </div>
-                </Modal>
+                      </div>
+                    </Modal>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -321,7 +357,7 @@ const UploadAndConversion: React.FC = () => {
                 <p className="mb-4 text-xs text-accent">Only mp4 file less than 1MB is allowed to upload.</p>
                 <input type="file" className="mb-2" onChange={handleFileChange} ref={fileInputRef} />
                 {
-                  file && <p className="text-right text-xs text default">Requires 1 dummy credit to run</p> //hard coded
+                  file && <p className="text-right text-xs text default">Requires 1 credit to run</p> //hard coded
                 }
               </div>
             </div>
@@ -357,9 +393,11 @@ const UploadAndConversion: React.FC = () => {
                   </div>
                   <p className="text-xs text-default mb-1">Time: {elapsedTime}</p>
                   <p className="text-xs text-default mb-2">=================================</p>
-                  <p className="text-xs text-default mb-1">
-                    🕺 Credit required, paying on {target.replace("-", " ")} ...
-                  </p>
+                  {!skipCredit && (
+                    <p className="text-xs text-default mb-1">
+                      🕺 Credit required, paying on {target.replace("-", " ")} ...
+                    </p>
+                  )}
                   {skipCredit && <p className="text-xs text-default mb-1">🕺 {skipCredit} ...</p>}
                   {creditHash && <p className="text-xs text-default mb-1">🕺 Use credit tx {creditHash} ...</p>}
                   {creditHash && <p className="text-xs text-default mb-1">🕺 Uploading video ...</p>}

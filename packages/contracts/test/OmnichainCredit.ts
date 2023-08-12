@@ -35,12 +35,15 @@ describe("Lock", function () {
     if (network.name === "hardhat") {
       return;
     }
-    it("Query", async function () {
+    it("Before Query", async function () {
       const { signer, omnichainCredit } = await setup();
       const signerAddress = await signer.getAddress();
       console.log("signerAddress", signerAddress);
-      console.log("credit", await omnichainCredit.credit(signerAddress));
-      console.log("isNotFirstTime", await omnichainCredit.isNotFirstTime(signerAddress));
+      console.log("initialCredit", await omnichainCredit.initialCredit());
+      console.log("depositted", await omnichainCredit.depositted(signerAddress));
+      console.log("used", await omnichainCredit.used(signerAddress));
+      console.log("getCredit", await omnichainCredit.getCredit(signerAddress));
+      // console.log("isNotFirstTime", await omnichainCredit.isNotFirstTime(signerAddress));
     });
 
     it.skip("Set Trusted Remote", async function () {
@@ -64,8 +67,19 @@ describe("Lock", function () {
 
     it.skip("Use in remote", async function () {
       const { omnichainCredit, targetChainId } = await setup();
-      const tx = await omnichainCredit.useCredit(targetChainId, 1, { value: ethers.parseEther("0.001") });
+      const tx = await omnichainCredit.useCredit(targetChainId, 1, { value: ethers.parseEther("0.005") });
       console.log(tx.hash);
+    });
+
+    it.skip("After Query", async function () {
+      const { signer, omnichainCredit } = await setup();
+      const signerAddress = await signer.getAddress();
+      console.log("signerAddress", signerAddress);
+      console.log("initialCredit", await omnichainCredit.initialCredit());
+      console.log("depositted", await omnichainCredit.depositted(signerAddress));
+      console.log("used", await omnichainCredit.used(signerAddress));
+      console.log("getCredit", await omnichainCredit.getCredit(signerAddress));
+      // console.log("isNotFirstTime", await omnichainCredit.isNotFirstTime(signerAddress));
     });
   });
 });

@@ -14,6 +14,6 @@ export const endpoints = {
 };
 
 export const contracts = {
-  "optimism-goerli": "0xf989E98e1CC730Fc4b4d4754BAF83892218FD09f",
-  "base-goerli": "0xF1B98Dd8fF1592BbAE96A96Bd6261ffA5eb90301",
+  "optimism-goerli": "0xfEa0aeE6d6fE4640EBeF38bE713cbEacf1dEb549",
+  "base-goerli": "0x4a917EC1917484D9C9aa196742D1588705320B91",
 } as any;
