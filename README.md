@@ -4,7 +4,7 @@ Transforming Videos into Certified Motion Data with AI.
 
 ## Description
 
-Welcome to MotionMint, where videos do more than play, they transform. Our advanced AI turns videos into motion data. Each video is stamped with trust, coming from verified creators. For creators, this isn't just a showcase, it's a chance to share and monetize.
+MotionMint, where videos do more than play, they transform. Our advanced AI turns videos into motion data, and each motion is stamped with trust, coming from verified creators attestaion.
 
 ## Live Demo
 
@@ -30,7 +30,9 @@ MotionMint leverages the **DeepMotion API** for the core functionality of video-
 
 ### OPStack Smart Contracts
 
-The underlying smart contracts of MotionMint, known as **OPStack Smart Contracts**, are deployed on both the **Base** and **Zora** networks. These contracts facilitate the minting, trading, and licensing of motion data, ensuring decentralized and transparent transactions.
+The underlying smart contracts of MotionMint, are deployed on **Optimism** the **Base** and **Zora** networks. These contracts facilitate the minting, trading, and attestation of motion data, ensuring decentralized and transparent transactions.
+
+And trustworthy creator verification of AI-based content is crutial for tuture ecosystem.
 
 ### Zora Protocol NFT and Marketplace
 
@@ -42,7 +44,7 @@ The marketplace where creators can monetize their motion data is built upon the 
 
 ### EAS Attestation
 
-- **EAS (Ethereum Attestation Service)**: Used to manage the licensing of motion data. It ensures that licensing terms are adhered to and provides a mechanism for verification of rights and ownership.
+- **EAS (Ethereum Attestation Service)**: Used to manage the attestation of motion data. It ensures that provides a mechanism for verification of rights and ownership.
 
 #### Optimism schema
 

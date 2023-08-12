@@ -42,7 +42,7 @@ export default function LandingPage() {
         <section className="py-8 text-center">
           <h2 className="text-3xl font-bold text-default mb-8">About</h2>
           <p className="text-lg text-default">
-            {`Welcome to MotionMint, where videos do more than play, they transform. Our advanced AI turns videos into motion data. Each video is stamped with trust, coming from verified creators. For creators, this isn't just a showcase, it's a chance to share and monetize.`}
+            {`MotionMint, where videos do more than play, they transform. Our advanced AI turns videos into motion data, and each motion is stamped with trust, coming from verified creators attestaion.`}
           </p>
         </section>
         <section className="py-8 text-center">
@@ -59,8 +59,8 @@ export default function LandingPage() {
               <div className="text-3xl text-primary mb-4">
                 <FaDollarSign />
               </div>
-              <h3 className="text-xl font-semibold text-default mb-2">Monetization Opportunity</h3>
-              <p className="text-default">Unlock new revenue streams by selling motion data rights.</p>
+              <h3 className="text-xl font-semibold text-default mb-2">Verifiable</h3>
+              <p className="text-default">Users can verify the content is original content by the creator.</p>
             </div>
             <div className="text-center flex flex-col items-center">
               <div className="text-3xl text-primary mb-4">
