@@ -1,8 +1,10 @@
 # Motion Mint
 
-Motion, Mint, Monetize: The Future of Motion Data. MotionMint is where videos evolve into valuable motion data, enabling creators to showcase, share, and monetize their dynamic artistry.
+Convert video to motion data with a certificate.
 
-MotionMint is revolutionizing the way we perceive and utilize video content. By harnessing the power of advanced AI, it effortlessly converts videos into rich motion data. But it doesn't stop there. Creators are given a unique platform to not only showcase and share their motion masterpieces but also to monetize them. Dive into the future of motion data, where every movement holds value and potential.
+MotionMint uses AI to convert videos into motion data, all certified by trusted creators. An avenue for creators to showcase and monetize.
+
+Welcome to MotionMint. Here, videos are not just played, they're transformed. With our state-of-the-art AI, videos evolve into valuable motion data. What sets us apart? Our certification process. It ensures that every piece of content originates from a trusted creator. For those creators, it's more than a platform; it's an opportunity. You can display your work, share it with the world, and turn your creativity into earnings. With MotionMint, every video has a certified badge of trust and value.
 
 ## Live Demo
 
