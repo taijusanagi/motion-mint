@@ -40,7 +40,7 @@ const useZora = () => {
         network: ZDKNetwork.Base,
         chain: ZDKChain.BaseGoerli,
       };
-      setZoraSubdomain("bgor");
+      setZoraSubdomain("basegor");
     } else {
       setZDK(undefined);
       setZoraSubdomain("");

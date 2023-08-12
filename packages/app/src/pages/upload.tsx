@@ -28,6 +28,8 @@ import SelectDropdown from "@/components/SelectDropdown";
 import OmnichainCredit from "@/utils/layerzero/OmnichainCredit.json";
 import { contracts as lzContracts, chainIds as lzChainIds } from "@/utils/layerzero/networks";
 
+import { waitForMessageReceived } from "@layerzerolabs/scan-client";
+
 const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 const inter = Inter({ subsets: ["latin"] });
@@ -70,6 +72,8 @@ const UploadAndConversion: React.FC = () => {
 
   const [opCredit, setOpCredit] = useState(0);
   const [bsCredit, setBsCredit] = useState(0);
+
+  const [messageWaitCrossChain, setMessageWaitCrossChain] = useState("");
 
   function formatElapsedTime(milliseconds: number) {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -133,6 +137,7 @@ const UploadAndConversion: React.FC = () => {
         console.log("chain.network", chain.network);
         console.log("target", target);
 
+        const sourceChainId = lzChainIds[chain.network];
         let targetChainId = 0;
         if (chain.network === target) {
           targetChainId = 0;
@@ -151,7 +156,15 @@ const UploadAndConversion: React.FC = () => {
         const { hash } = await lzContract.useCredit(targetChainId, 1, {
           value: ethers.parseEther(targetChainId == 0 ? "0" : "0.005"),
         });
-        setCreditHash(hash);
+
+        if (targetChainId !== 0) {
+          setMessageWaitCrossChain("Waiting for cross-chain message delivered...");
+          const message = await waitForMessageReceived(sourceChainId, hash);
+          setCreditHash(message.dstTxHash);
+        } else {
+          setCreditHash(hash);
+        }
+
         // setTargetChainId(targetChainId);
         // contract.
       } else {
@@ -238,7 +251,6 @@ const UploadAndConversion: React.FC = () => {
           );
           setCid(cid);
           console.log(cid);
-          setCreditHash("");
           setProgress(100);
           setIsLoading(false);
         }
@@ -314,7 +326,7 @@ const UploadAndConversion: React.FC = () => {
                     <p className="mb-2 text-default font-bold text-sm">Use credit on</p>
                     <p className="mb-2 text-xs text-accent">Use cross-chain credit with LayerZero.</p>
                     <p className="mb-2 text-default text-xs">
-                      - Optimism: {opCredit} Base: {bsCredit}
+                      Optimism: {opCredit} Base: {bsCredit}
                     </p>
                     <div className="w-40">
                       <SelectDropdown
@@ -399,7 +411,9 @@ const UploadAndConversion: React.FC = () => {
                     </p>
                   )}
                   {skipCredit && <p className="text-xs text-default mb-1">🕺 {skipCredit} ...</p>}
+                  {messageWaitCrossChain && <p className="text-xs text-default mb-1">🕺 {messageWaitCrossChain} ...</p>}
                   {creditHash && <p className="text-xs text-default mb-1">🕺 Use credit tx {creditHash} ...</p>}
+                  {creditHash && <p className="text-xs text-default mb-1">🕺 Waiting for confirmation ...</p>}
                   {creditHash && <p className="text-xs text-default mb-1">🕺 Uploading video ...</p>}
                   {jobId && <p className="text-xs text-default mb-1">🕺 Job ID created: {jobId} ...</p>}
                   {jobId && <p className="text-xs text-default mb-1">🕺 Converting video to Motion ...</p>}
@@ -433,94 +447,100 @@ const UploadAndConversion: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="mb-4">
-                  <div className="border rounded-md bg-default text-default p-4">
-                    <h3 className="text-lg font-bold text-default mb-1">Attestation</h3>
-                    <p className="mb-4 text-xs text-accent">
-                      Create attestation with cid to verify the content is created by the trusted issuer.
-                    </p>
-                    <p className="text-default text-xs mb-2">Creator: {address}</p>
-                    <p className="text-default text-xs mb-4">CID: {cid}</p>
-                    {!worldIdAttestation && (
-                      <div className="flex justify-end">
-                        <IDKitWidget
-                          app_id="app_b2a3c336a98d489c29eb2ec29e787470"
-                          action="attest"
-                          signal={cid} // use cid as signal
-                          onSuccess={(attestation: any) => setWorldIdAttestation(attestation)}
-                        >
-                          {({ open }) => <Button label="Attest with World ID" onClick={open} />}
-                        </IDKitWidget>
-                      </div>
-                    )}
-                    {worldIdAttestation && (
-                      <>
-                        <pre className="mb-4 border rounded-lg p-4 overflow-x-scroll min-w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 shadow-2xl text-xs text-white">
-                          {JSON.stringify(worldIdAttestation, null, 2)}
-                        </pre>
-                        <div className="flex justify-end mb-2">
-                          <Button
-                            disabled={!!uid}
-                            label="Create EAS attestation"
-                            onClick={async () => {
-                              if (!eas) {
-                                alert("Current network does not support EAS");
-                                return;
-                              }
-                              const schemaEncoder = new SchemaEncoder(
-                                "string CID,bytes32 nullifier_hash,bytes proof,bytes32 merkle_root,string credential_type",
-                              );
-                              const encodedData = schemaEncoder.encodeData([
-                                { name: "CID", value: cid, type: "string" },
-                                { name: "nullifier_hash", value: worldIdAttestation.nullifier_hash, type: "bytes32" },
-                                { name: "proof", value: worldIdAttestation.proof, type: "bytes" },
-                                { name: "merkle_root", value: worldIdAttestation.merkle_root, type: "bytes32" },
-                                { name: "credential_type", value: worldIdAttestation.credential_type, type: "string" },
-                              ]);
-                              // some bug maybe in wagmi, so workaround here
-                              const provider = new ethers.BrowserProvider((window as any).ethereum as any);
-                              const signer = await provider.getSigner();
-                              eas.connect(signer);
-                              const { tx } = await eas.attest({
-                                schema: "0x97e1d46622e995367fa950d673c978650f37303fb7feabe0041e3b8d5e554c17",
-                                data: {
-                                  recipient: address as string,
-                                  expirationTime: 0 as any,
-                                  revocable: true,
-                                  data: encodedData,
-                                },
-                              });
-                              setHash(tx.hash);
-                              console.log("tx", tx);
-                              const receipt = await tx.wait();
-                              const uid = receipt?.logs[0].data;
-                              console.log("EAS uid", uid);
-                              setUid(uid as string);
-                            }}
-                          />
+                {chain?.id !== 999 && (
+                  <div className="mb-4">
+                    <div className="border rounded-md bg-default text-default p-4">
+                      <h3 className="text-lg font-bold text-default mb-1">Attestation</h3>
+                      <p className="mb-4 text-xs text-accent">
+                        Create attestation with cid to verify the content is created by the trusted issuer.
+                      </p>
+                      <p className="text-default text-xs mb-2">Creator: {address}</p>
+                      <p className="text-default text-xs mb-4">CID: {cid}</p>
+                      {!worldIdAttestation && (
+                        <div className="flex justify-end">
+                          <IDKitWidget
+                            app_id="app_b2a3c336a98d489c29eb2ec29e787470"
+                            action="attest"
+                            signal={cid} // use cid as signal
+                            onSuccess={(attestation: any) => setWorldIdAttestation(attestation)}
+                          >
+                            {({ open }) => <Button label="Attest with World ID" onClick={open} />}
+                          </IDKitWidget>
                         </div>
-                        <p className="text-xs text-default mb-2">=================================</p>
-                        <p className="text-xs text-default mb-1">🪪 World ID proof is created ...</p>
-                        <p className="text-xs text-default mb-1">🪪 Waiting user to create EAS attestation ...</p>
-                        {hash && <p className="text-xs text-default mb-1">🪪 Tx sent {hash} ...</p>}
-                        {hash && <p className="text-xs text-default mb-1">🪪 Waiting tx confirmation ...</p>}
-                        {uid && (
-                          <p className="text-xs text-default mb-1">
-                            🪪 EAS on-chain attestation created:{" "}
-                            <a
-                              href={`https://${subdomain}.easscan.org/attestation/view/${uid}`}
-                              className="text-blue-800"
-                            >
-                              {uid}
-                            </a>{" "}
-                            ...
-                          </p>
-                        )}
-                        {uid && <p className="text-xs text-default mb-1">🪪 Done!</p>}
-                      </>
-                    )}
+                      )}
+                      {worldIdAttestation && (
+                        <>
+                          <pre className="mb-4 border rounded-lg p-4 overflow-x-scroll min-w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 shadow-2xl text-xs text-white">
+                            {JSON.stringify(worldIdAttestation, null, 2)}
+                          </pre>
+                          <div className="flex justify-end mb-2">
+                            <Button
+                              disabled={!!uid}
+                              label="Create EAS attestation"
+                              onClick={async () => {
+                                if (!eas) {
+                                  alert("Current network does not support EAS");
+                                  return;
+                                }
+                                const schemaEncoder = new SchemaEncoder(
+                                  "string CID,bytes32 nullifier_hash,bytes proof,bytes32 merkle_root,string credential_type",
+                                );
+                                const encodedData = schemaEncoder.encodeData([
+                                  { name: "CID", value: cid, type: "string" },
+                                  { name: "nullifier_hash", value: worldIdAttestation.nullifier_hash, type: "bytes32" },
+                                  { name: "proof", value: worldIdAttestation.proof, type: "bytes" },
+                                  { name: "merkle_root", value: worldIdAttestation.merkle_root, type: "bytes32" },
+                                  {
+                                    name: "credential_type",
+                                    value: worldIdAttestation.credential_type,
+                                    type: "string",
+                                  },
+                                ]);
+                                // some bug maybe in wagmi, so workaround here
+                                const provider = new ethers.BrowserProvider((window as any).ethereum as any);
+                                const signer = await provider.getSigner();
+                                eas.connect(signer);
+                                const { tx } = await eas.attest({
+                                  schema: "0x97e1d46622e995367fa950d673c978650f37303fb7feabe0041e3b8d5e554c17",
+                                  data: {
+                                    recipient: address as string,
+                                    expirationTime: 0 as any,
+                                    revocable: true,
+                                    data: encodedData,
+                                  },
+                                });
+                                setHash(tx.hash);
+                                console.log("tx", tx);
+                                const receipt = await tx.wait();
+                                const uid = receipt?.logs[0].data;
+                                console.log("EAS uid", uid);
+                                setUid(uid as string);
+                              }}
+                            />
+                          </div>
+                          <p className="text-xs text-default mb-2">=================================</p>
+                          <p className="text-xs text-default mb-1">🪪 World ID proof is created ...</p>
+                          <p className="text-xs text-default mb-1">🪪 Waiting user to create EAS attestation ...</p>
+                          {hash && <p className="text-xs text-default mb-1">🪪 Tx sent {hash} ...</p>}
+                          {hash && <p className="text-xs text-default mb-1">🪪 Waiting tx confirmation ...</p>}
+                          {uid && (
+                            <p className="text-xs text-default mb-1">
+                              🪪 EAS on-chain attestation created:{" "}
+                              <a
+                                href={`https://${subdomain}.easscan.org/attestation/view/${uid}`}
+                                className="text-blue-800"
+                              >
+                                {uid}
+                              </a>{" "}
+                              ...
+                            </p>
+                          )}
+                          {uid && <p className="text-xs text-default mb-1">🪪 Done!</p>}
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="mb-4">
                   <div className="border rounded-md bg-default text-default p-4">
                     <h3 className="text-lg font-bold text-default mb-1">Setting</h3>
@@ -533,7 +553,7 @@ const UploadAndConversion: React.FC = () => {
                   {/* <Button label="Cancel" onClick={handleCancelClick} type="secondary" /> */}
                   <Button
                     label="Mint & Sell"
-                    // disabled={isMintStarted}
+                    disabled={isMintStarted}
                     onClick={async () => {
                       setCollection("");
                       setIsMintStarted(false);
