@@ -169,7 +169,6 @@ const UploadAndConversion: React.FC = () => {
         // contract.
       } else {
         // "skip"
-        setIsLoading(false);
         setProgress(0);
         setCreditHash("undefined");
         setSkipCredit("Credit payment is skipped for Zora Testnet because of the Layer Zero compatibility.");
