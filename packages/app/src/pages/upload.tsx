@@ -268,8 +268,9 @@ const UploadAndConversion: React.FC = () => {
 
   async function fetchVideoAndConvertToFile(url: string) {
     // url.replace("https", "http");
+    const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`);
 
-    const response = await fetch(url.replace("https", "http"));
+    // const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
