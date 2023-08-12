@@ -1,16 +1,16 @@
 # Motion Mint
 
-## Tagline
-
-Motion, Mint, Monetize: The Future of Motion Data.
-
-## Short Description
-
-MotionMint is where videos evolve into valuable motion data, enabling creators to showcase, share, and monetize their dynamic artistry.
-
-## Long Description
+Motion, Mint, Monetize: The Future of Motion Data. MotionMint is where videos evolve into valuable motion data, enabling creators to showcase, share, and monetize their dynamic artistry.
 
 MotionMint is revolutionizing the way we perceive and utilize video content. By harnessing the power of advanced AI, it effortlessly converts videos into rich motion data. But it doesn't stop there. Creators are given a unique platform to not only showcase and share their motion masterpieces but also to monetize them. Dive into the future of motion data, where every movement holds value and potential.
+
+## Live Demo
+
+https://motion-mint.vercel.app/
+
+## Demo Video
+
+TBS
 
 ## Benefit
 
