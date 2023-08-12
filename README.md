@@ -58,7 +58,7 @@ EAS does not support Zora.
 
 ### LayerZero Cross-chain Messaging
 
-Given the multi-chain nature of MotionMint's deployment, **Hyperlane Cross-chain Messaging** is employed to ensure synchronization between the Base and Zora networks. This ensures that data and transactions are consistent and updated across different blockchain networks.
+Given the multi-chain nature of MotionMint's deployment, **LayerZero Cross-chain Messaging** is employed to ensure synchronization between the Base and Zora networks. This ensures that data and transactions are consistent and updated across different blockchain networks.
 
 #### Optimism -> Base
 
