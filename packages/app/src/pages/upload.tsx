@@ -175,18 +175,18 @@ const UploadAndConversion: React.FC = () => {
         setSkipCredit("Credit payment is skipped for Zora Testnet because of the Layer Zero compatibility.");
       }
 
-      const createJobResponse = await fetch("/api/createJob", {
-        method: "POST",
-        body: formData,
-      });
-      if (createJobResponse.status !== 200) {
-        alert(createJobResponse.statusText);
-        return;
-      }
+      // const createJobResponse = await fetch("/api/createJob", {
+      //   method: "POST",
+      //   body: formData,
+      // });
+      // if (createJobResponse.status !== 200) {
+      //   alert(createJobResponse.statusText);
+      //   return;
+      // }
 
-      const createJobData = await createJobResponse.json();
-      const { jobId } = createJobData;
-      // const jobId = "vuhAYMPbSTcfAtm8NopRGj";
+      // const createJobData = await createJobResponse.json();
+      // const { jobId } = createJobData;
+      const jobId = "vuhAYMPbSTcfAtm8NopRGj";
       setJobId(jobId);
 
       const intervalId = setInterval(async () => {
@@ -267,7 +267,9 @@ const UploadAndConversion: React.FC = () => {
   };
 
   async function fetchVideoAndConvertToFile(url: string) {
-    const response = await fetch(url);
+    // url.replace("https", "http");
+
+    const response = await fetch(url.replace("https", "http"));
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }

@@ -34,6 +34,11 @@ The underlying smart contracts of MotionMint, are deployed on **Optimism** the *
 
 And trustworthy creator verification of AI-based content is crutial for tuture ecosystem.
 
+### Base
+
+This is a good consumer product which convert video to motion using AI and blockchain.
+MotionMint is running on Base testnet.
+
 ### Zora Protocol NFT and Marketplace
 
 The marketplace where creators can monetize their motion data is built upon the **Zora Protocol**. This ensures a decentralized, transparent, and fair pricing mechanism for the motion data, allowing creators to capture more value from their work.
@@ -60,7 +65,7 @@ EAS does not support Zora.
 
 ### LayerZero Cross-chain Messaging
 
-Given the multi-chain nature of MotionMint's deployment, **LayerZero Cross-chain Messaging** is employed to ensure synchronization between the Base and Zora networks. This ensures that data and transactions are consistent and updated across different blockchain networks.
+Given the multi-chain nature of MotionMint's deployment, **LayerZero Cross-chain Messaging** is employed to ensure synchronization between the Optimisms and Base networks. This ensures that data and transactions are consistent and updated across different blockchain networks.
 
 #### Optimism -> Base
 
