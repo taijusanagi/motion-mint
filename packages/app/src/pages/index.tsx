@@ -21,7 +21,7 @@ export default function LandingPage() {
       <main className="flex-1 mx-auto w-full max-w-4xl px-4">
         <section className="text-center py-24">
           <h1 className="text-4xl font-bold text-primary mb-4">MotionMint</h1>
-          <p className="text-xl text-default mb-8">Motion, Mint, Monetize - The Future of Motion Data.</p>
+          <p className="text-xl text-default mb-8">Transforming Videos into Certified Motion Data with AI.</p>
           <Button
             label={!isConnected ? "Connect Wallet" : "Start App"}
             className="bg-primary text-default mx-2"
@@ -42,8 +42,7 @@ export default function LandingPage() {
         <section className="py-8 text-center">
           <h2 className="text-3xl font-bold text-default mb-8">About</h2>
           <p className="text-lg text-default">
-            MotionMint is where videos evolve into valuable motion data, enabling creators to showcase, share, and
-            monetize their dynamic artistry.
+            {`Welcome to MotionMint, where videos do more than play, they transform. Our advanced AI turns videos into motion data. Each video is stamped with trust, coming from verified creators. For creators, this isn't just a showcase, it's a chance to share and monetize.`}
           </p>
         </section>
         <section className="py-8 text-center">
