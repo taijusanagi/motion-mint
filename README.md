@@ -74,11 +74,6 @@ https://testnet.layerzeroscan.com/10160/address/0x4a917ec1917484d9c9aa196742d158
 
 LayerZero does not support Zora.
 
-## Deployed contract
-
-- TBD
-- TBD
-
 ## Created NFT
 
 ### Optimism
